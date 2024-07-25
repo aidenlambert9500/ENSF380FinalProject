@@ -1,7 +1,7 @@
 package ca.ucalgary.edu.ensf380;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.*;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,12 +19,15 @@ public class NewsAPI {
 		
 		String query = "bitcoin"; // Example query
 
+		// setup api for a GET request
 		String apiURL = "https://newsapi.org/v2/everything?q=" + query + "&apiKey=" + apiKey;
 		URL url = new URL(apiURL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("Authorization", "Bearer " + apiKey);
 		
+		
+		// gets the http response code from the api GET request
 		int responseCode = connection.getResponseCode();
         System.out.println("Response Code: " + responseCode);
         
@@ -36,11 +39,19 @@ public class NewsAPI {
         }
         in.close();
         
-        // Print the API response
-        System.out.println("API Response:");
-        System.out.println(response.toString());
+        // convert StringBuilder response into a JSON object and initialize a parser to read from the JSON
+        String jsonString = response.toString();
+        JsonParser parser = new JsonParser();
+        JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
         
-        JSONObject jsonResponse = new JSONObject(response.toString());
+        // get the status from the json response 'status' key
+        System.out.println(json.get("status").getAsString());
+        
+        // Print the API response
+//        System.out.println("API Response:");
+//        System.out.println(response.toString());
+        
+
         
         
         // Disconnect the HttpURLConnection
