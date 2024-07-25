@@ -1,3 +1,7 @@
+/*
+ * @author Aiden Lambert, Wesley Lui, Jacelynn Doan
+ */
+
 package ca.ucalgary.edu.ensf380;
 
 import com.google.gson.*;
@@ -108,7 +112,7 @@ public class NewsAPI {
 		int i = 0;
 		for (String title : news.getNews()) {
 			i++;
-			System.out.println(i + ". " + title);
+			//System.out.println(i + ". " + title);
 		}
 		
 		// test to print 5 breaking news articles
@@ -117,7 +121,7 @@ public class NewsAPI {
 		int j = 0;
 		for (String title : newsNoKey.getNews()) {
 			j++;
-			System.out.println(j + ". " + title);
+			//System.out.println(j + ". " + title);
 		}
 		
 	    }
