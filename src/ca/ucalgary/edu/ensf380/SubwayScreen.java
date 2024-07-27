@@ -8,9 +8,13 @@ import java.util.ArrayList;
 public class SubwayScreen extends JFrame {
     private JLabel weatherLabel, timeLabel, cityLabel;
     private String[] args;
+    private List<Station> stations;
+    private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
+    private Timer timer;
 
     public SubwayScreen(String[] args) {
         this.args = args;
+        this.stations = initializeStations();
 
         // Initialize the frame with a title and layout
         setTitle("SubwayScreen");
@@ -105,11 +109,59 @@ public class SubwayScreen extends JFrame {
         // Update the weather information
         updateWeatherPanel();
 
+        // Set up the timer to update the station every 20 seconds
+        timer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+        timer.start();
+
         // Make the Frame visible
         setVisible(true);
     }
 
     private void addTrainInformation(JPanel trainPanel) {
+        updateTrainPanel(trainPanel);
+    }
+
+    private void updateTrainPanel(JPanel trainPanel) {
+        trainPanel.removeAll();
+        JPanel mapPanel = new JPanel();
+        mapPanel.setLayout(new GridLayout(1, 6));
+
+        int start = currentStationIndex - 1;
+        int end = currentStationIndex + 5;
+        if (start < 0) {
+            start = 0;
+        }
+        if (end > stations.size()) {
+            end = stations.size();
+        }
+
+        for (int i = start; i < end; i++) {
+            JPanel stationPanel = new JPanel();
+            stationPanel.setLayout(new BorderLayout());
+
+            JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
+            JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
+
+            if (i == currentStationIndex) {
+                circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
+                circleLabel.setForeground(Color.RED);
+            }
+
+            stationPanel.add(circleLabel, BorderLayout.NORTH);
+            stationPanel.add(stationLabel, BorderLayout.SOUTH);
+            mapPanel.add(stationPanel);
+        }
+
+        trainPanel.add(mapPanel, BorderLayout.CENTER);
+        trainPanel.add(new JLabel("Next: " + stations.get((currentStationIndex + 1) % stations.size()).getStationName(), JLabel.CENTER), BorderLayout.SOUTH);
+
+        currentStationIndex = (currentStationIndex + 1) % stations.size();
+
+        trainPanel.revalidate();
+        trainPanel.repaint();
+    }
+
+    private List<Station> initializeStations() {
         List<Station> stations = new ArrayList<>();
         stations.add(new Station("R", "01", "R01", "Maplewood Station"));
         stations.add(new Station("R", "02", "R02", "Lakeview Heights Station"));
@@ -231,37 +283,9 @@ public class SubwayScreen extends JFrame {
         stations.add(new Station("G", "31", "G31", "Westwood Heights Station"));
         stations.add(new Station("G", "32", "G32", "Southgate Heights Station"));
         stations.add(new Station("G", "33", "G33", "Broadview Heights Station"));
-        
-        int currentStationIndex = 1; // Assuming current station is "Lakeview Heights Station" (index 1)
-        String nextStationName = stations.get(currentStationIndex + 1).getStationName();
-
-        int start = Math.max(0, currentStationIndex - 1);
-        int end = Math.min(stations.size(), currentStationIndex + 5);
-
-        JPanel mapPanel = new JPanel();
-        mapPanel.setLayout(new GridLayout(1, end - start));
-        for (int i = start; i < end; i++) {
-            JPanel stationPanel = new JPanel();
-            stationPanel.setLayout(new BorderLayout());
-
-            JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
-            JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
-
-            if (i == currentStationIndex) {
-                circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
-                circleLabel.setForeground(Color.RED);
-            }
-
-            stationPanel.add(circleLabel, BorderLayout.NORTH);
-            stationPanel.add(stationLabel, BorderLayout.SOUTH);
-            mapPanel.add(stationPanel);
-        }
-
-        trainPanel.add(mapPanel, BorderLayout.CENTER);
-        ((JLabel) trainPanel.getComponent(0)).setText("Next: " + nextStationName);
+        return stations;
     }
 
-    // Method which calls weatherParser to fetch current weather of given city
     private void updateWeatherPanel() {
         if (args == null || args.length == 0) {
             weatherLabel.setText("Please provide a city as a command line argument.");
