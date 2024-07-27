@@ -124,7 +124,7 @@ public class SubwayScreen extends JFrame {
     private void updateTrainPanel(JPanel trainPanel) {
         trainPanel.removeAll();
         JPanel mapPanel = new JPanel();
-        mapPanel.setLayout(new GridLayout(1, 6));
+        mapPanel.setLayout(new GridLayout(1, 7)); // Adjusted to include the arrow
 
         int start = currentStationIndex - 1;
         int end = currentStationIndex + 5;
@@ -150,6 +150,11 @@ public class SubwayScreen extends JFrame {
             stationPanel.add(circleLabel, BorderLayout.NORTH);
             stationPanel.add(stationLabel, BorderLayout.SOUTH);
             mapPanel.add(stationPanel);
+
+            if (i == currentStationIndex && i + 1 < end) {
+                // Add arrow panel between the current and next station
+                mapPanel.add(new ArrowPanel());
+            }
         }
 
         trainPanel.add(mapPanel, BorderLayout.CENTER);
@@ -161,6 +166,43 @@ public class SubwayScreen extends JFrame {
         trainPanel.repaint();
     }
 
+    // Custom panel to draw the arrow
+ // Custom panel to draw the arrow
+    class ArrowPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(2));
+            g2d.setColor(Color.BLACK);
+            
+            // Coordinates for the stick of the arrow
+            int x1 = getWidth() / 3; // Adjusted to shorten the stick
+            int y1 = getHeight() / 7; // Moved up slightly
+            int x2 = 3 * getWidth() / 3; // Adjusted to shorten the stick
+            int y2 = getHeight() / 7; // Moved up slightly
+            
+            // Draw the stick of the arrow
+            g2d.drawLine(x1, y1, x2, y2);
+            
+            // Arrow size
+            int arrowSize = 5; // Smaller arrow size
+            
+            // Coordinates for the arrowhead
+            int[] xPoints = {x2 - arrowSize, x2 - arrowSize, x2};
+            int[] yPoints = {y2 - arrowSize, y2 + arrowSize, y2};
+            
+            // Draw the arrowhead
+            g2d.fillPolygon(xPoints, yPoints, 3);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(30, 30); 
+        }
+    }
+
+
     private List<Station> initializeStations() {
         List<Station> stations = new ArrayList<>();
         stations.add(new Station("R", "01", "R01", "Maplewood Station"));
@@ -171,136 +213,61 @@ public class SubwayScreen extends JFrame {
         stations.add(new Station("R", "06", "R06", "Suncrest Station"));
         stations.add(new Station("R", "07", "R07", "Riverstone Station"));
         stations.add(new Station("R", "08", "R08", "Rosewood Station"));
-        stations.add(new Station("R", "09", "R09", "Springhill Station"));
-        stations.add(new Station("R", "10", "R10", "Forestview Station"));
-        stations.add(new Station("R", "11", "R11", "Oakdale Station"));
-        stations.add(new Station("R", "12", "R12", "Brookside Station"));
-        stations.add(new Station("R", "13", "R13", "Highland Park Station"));
-        stations.add(new Station("R", "14", "R14", "Cedar Point Station"));
-        stations.add(new Station("R", "15", "R15", "Northgate Station"));
-        stations.add(new Station("R", "16", "R16", "Central Square Station"));
-        stations.add(new Station("R", "17", "R17", "Parkside Station"));
-        stations.add(new Station("R", "18", "R18", "Woodland Station"));
-        stations.add(new Station("R", "19", "R19", "Summerfield Station"));
-        stations.add(new Station("R", "20", "R20", "City Hall Station"));
-        stations.add(new Station("R", "21", "R21", "Hillcrest Station"));
-        stations.add(new Station("R", "22", "R22", "Mill Creek Station"));
-        stations.add(new Station("R", "23", "R23", "Riverside Station"));
-        stations.add(new Station("R", "24", "R24", "Willow Grove Station"));
-        stations.add(new Station("R", "25", "R25", "Pine Grove Station"));
-        stations.add(new Station("R", "26", "R26", "West End Station"));
-        stations.add(new Station("R", "27", "R27", "Bayfront Station"));
-        stations.add(new Station("R", "28", "R28", "Sunnybrook Station"));
-        stations.add(new Station("R", "29", "R29", "Fairmont Station"));
-        stations.add(new Station("R", "30", "R30", "Oceanfront Station"));
-        stations.add(new Station("R", "31", "R31", "The Meadows Station"));
-        stations.add(new Station("R", "32", "R32", "Fairview Station"));
-        stations.add(new Station("R", "33", "R33", "West Hills Station"));
-        stations.add(new Station("R", "34", "R34", "Oakwood Station"));
-        stations.add(new Station("R", "35", "R35", "Southbank Station"));
-        stations.add(new Station("R", "36", "R36", "Midtown Station"));
-        stations.add(new Station("R", "37", "R37", "Maple Leaf Station"));
-        stations.add(new Station("R", "38", "R38", "Lakewood Station"));
-        stations.add(new Station("R", "39", "R39", "City Center Station"));
-        stations.add(new Station("R", "40", "R40", "Forest Hill Station"));
-        stations.add(new Station("R", "41", "R41", "Skyview Station"));
-        stations.add(new Station("R", "42", "R42", "Cedar Hill Station"));
-        stations.add(new Station("R", "43", "R43", "Hilltop Station"));
-        stations.add(new Station("B", "1", "B01", "Northside Station"));
-        stations.add(new Station("B", "2", "B02", "Bayview Station"));
-        stations.add(new Station("B", "3", "B03", "Greenfield Station"));
-        stations.add(new Station("B", "4", "B04", "University Station"));
-        stations.add(new Station("B", "5", "B05", "Stonebridge Station"));
-        stations.add(new Station("B", "6", "B06", "Cherrywood Station"));
-        stations.add(new Station("B", "7", "B07", "Broadview Station"));
-        stations.add(new Station("B", "8", "B08", "Riverfront Station"));
-        stations.add(new Station("B", "9", "B09", "Parkview Station"));
-        stations.add(new Station("B", "10", "B10", "Central Park Station"));
-        stations.add(new Station("B", "11", "B11", "Redwood Station"));
-        stations.add(new Station("B", "12", "B12", "Brookhaven Station"));
-        stations.add(new Station("B", "13", "B13", "Elmwood Station"));
-        stations.add(new Station("B", "14", "B14", "Downtown Station"));
-        stations.add(new Station("B", "15", "B15", "Southside Station"));
-        stations.add(new Station("B", "16", "B16", "Lakeside Station"));
-        stations.add(new Station("B", "17", "B17", "Grandview Station"));
-        stations.add(new Station("B", "18", "B18", "Harrison Station"));
-        stations.add(new Station("B", "19", "B19", "Sunset Station"));
-        stations.add(new Station("B", "20", "B20", "Sunnydale Station"));
-        stations.add(new Station("B", "21", "B21", "Woodland Station"));
-        stations.add(new Station("B", "22", "B22", "Meadowbrook Station"));
-        stations.add(new Station("B", "23", "B23", "Forest Ridge Station"));
-        stations.add(new Station("B", "24", "B24", "Springfield Station"));
-        stations.add(new Station("B", "25", "B25", "Greenfield Park Station"));
-        stations.add(new Station("B", "26", "B26", "Riverside Station"));
-        stations.add(new Station("B", "27", "B27", "Cedar Grove Station"));
-        stations.add(new Station("B", "28", "B28", "Oakwood Station"));
-        stations.add(new Station("B", "29", "B29", "Oak Hill Station"));
-        stations.add(new Station("B", "30", "B30", "Summit Hill Station"));
-        stations.add(new Station("B", "31", "B31", "Pleasantview Station"));
-        stations.add(new Station("B", "32", "B32", "Ridgeview Station"));
-        stations.add(new Station("B", "33", "B33", "Northfield Station"));
-        stations.add(new Station("B", "34", "B34", "Lakeshore Station"));
-        stations.add(new Station("B", "35", "B35", "Mountainview Station"));
-        stations.add(new Station("B", "36", "B36", "Vista Heights Station"));
-        stations.add(new Station("B", "37", "B37", "Sunridge Station"));
-        stations.add(new Station("B", "38", "B38", "Silver Creek Station"));
-        stations.add(new Station("B", "39", "B39", "Timberline Station"));
-        stations.add(new Station("B", "40", "B40", "Clearwater Station"));
-        stations.add(new Station("B", "41", "B41", "Ridgewood Station"));
-        stations.add(new Station("B", "42", "B42", "Horizon Station"));
-        stations.add(new Station("B", "43", "B43", "Summit Station"));
-        stations.add(new Station("B", "44", "B44", "South Park Station"));
-        stations.add(new Station("G", "1", "G01", "Midway Station"));
-        stations.add(new Station("G", "2", "G02", "Fairmont Heights Station"));
-        stations.add(new Station("G", "3", "G03", "Oceanfront Heights Station"));
-        stations.add(new Station("G", "4", "G04", "Ashland Station"));
-        stations.add(new Station("G", "5", "G05", "Westmont Station"));
-        stations.add(new Station("G", "6", "G06", "Southview Station"));
-        stations.add(new Station("G", "7", "G07", "Lakefront Station"));
-        stations.add(new Station("G", "8", "G08", "City Heights Station"));
-        stations.add(new Station("G", "9", "G09", "Forest Manor Station"));
-        stations.add(new Station("G", "10", "G10", "Skyline Heights Station"));
-        stations.add(new Station("G", "11", "G11", "Cedar Heights Station"));
-        stations.add(new Station("G", "12", "G12", "Hillside Station"));
-        stations.add(new Station("G", "13", "G13", "North Hills Station"));
-        stations.add(new Station("G", "14", "G14", "Bayview Heights Station"));
-        stations.add(new Station("G", "15", "G15", "Green Hills Heights Station"));
-        stations.add(new Station("G", "16", "G16", "University Park Station"));
-        stations.add(new Station("G", "17", "G17", "Stoneview Station"));
-        stations.add(new Station("G", "18", "G18", "Willow Grove Station"));
-        stations.add(new Station("G", "19", "G19", "Cherrywood Heights Station"));
-        stations.add(new Station("G", "20", "G20", "Riverfront Heights Station"));
-        stations.add(new Station("G", "21", "G21", "Parkview Heights Station"));
-        stations.add(new Station("G", "22", "G22", "Central Park Heights Station"));
-        stations.add(new Station("G", "23", "G23", "Redwood Park Station"));
-        stations.add(new Station("G", "24", "G24", "Brookhaven Heights Station"));
-        stations.add(new Station("G", "25", "G25", "Elmwood Heights Station"));
-        stations.add(new Station("G", "26", "G26", "Southside Heights Station"));
-        stations.add(new Station("G", "27", "G27", "Midland Heights Station"));
-        stations.add(new Station("G", "28", "G28", "Fairway Heights Station"));
-        stations.add(new Station("G", "29", "G29", "Oceanview Heights Station"));
-        stations.add(new Station("G", "30", "G30", "Ashwood Heights Station"));
-        stations.add(new Station("G", "31", "G31", "Westwood Heights Station"));
-        stations.add(new Station("G", "32", "G32", "Southgate Heights Station"));
-        stations.add(new Station("G", "33", "G33", "Broadview Heights Station"));
+        stations.add(new Station("R", "09", "R09", "Westridge Station"));
+        stations.add(new Station("R", "10", "R10", "Pinehurst Station"));
         return stations;
     }
 
     private void updateWeatherPanel() {
-        if (args == null || args.length == 0) {
-            weatherLabel.setText("Please provide a city as a command line argument.");
-        } else {
-            String city = args[0];
-            WeatherParser weatherReport = new WeatherParser();
-            String weatherInfo = weatherReport.getWeatherInfo(city);
-            String time = weatherReport.getTime(city);
-            weatherLabel.setText(weatherInfo);
-            timeLabel.setText(time);
-            cityLabel.setText(city);
-        }
+        String city = args.length > 0 ? args[0] : "Calgary"; // Set default city to Calgary if no argument is passed
+        weatherLabel.setText("Temperature: " + Weather.getTemperature(city));
+        timeLabel.setText("Time: " + Weather.getTime());
+        cityLabel.setText(city);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new SubwayScreen(args));
+        new SubwayScreen(args);
+    }
+}
+
+class Station {
+    private String line;
+    private String stationCode;
+    private String stationID;
+    private String stationName;
+
+    public Station(String line, String stationCode, String stationID, String stationName) {
+        this.line = line;
+        this.stationCode = stationCode;
+        this.stationID = stationID;
+        this.stationName = stationName;
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public String getStationCode() {
+        return stationCode;
+    }
+
+    public String getStationID() {
+        return stationID;
+    }
+
+    public String getStationName() {
+        return stationName;
+    }
+}
+
+class Weather {
+    public static String getTemperature(String city) {
+        // Mock implementation, replace with actual API call
+        return "20°C";
+    }
+
+    public static String getTime() {
+        // Mock implementation, replace with actual time fetching
+        return "12:00 PM";
     }
 }
