@@ -52,11 +52,13 @@ public class WeatherParser {
 		try {
 			Document doc = Jsoup.connect(url).ignoreContentType(true).get();
 			String json = doc.text();
-			Pattern pattern = Pattern.compile("\"datetime\":\"([^\"]+)\"");
+			Pattern pattern = Pattern.compile("\"datetime\":\"(\\d{4}-\\d{2}-\\d{2})T(\\d{2}:\\d{2})");
 			Matcher matcher = pattern.matcher(json);
 
 			if (matcher.find()) {
-				return "Current Time: " + matcher.group(1);
+				String date = matcher.group(1);
+				String time = matcher.group(2);
+				return "Date: " + date + ", Time: " + time;
 			} else {
 				return "Time information not found.";
 			}
@@ -69,7 +71,7 @@ public class WeatherParser {
 	public static void main(String[] args) {
 		// Use command-line argument for the city name
 		if (args.length == 0) {
-			System.out.println("Please provide a city name as a command line argument.");
+			System.out.println("Please provide a city as a command line argument.");
 			return;
 		}
 
