@@ -1,15 +1,15 @@
-package ca.ucalgary.edu.ensf380;
+package ca.ucalgary.edu.ensf380; 
 
-public class Station {
+class Station {
     private String line;
-    private String stationNumber;
     private String stationCode;
+    private String stationID;
     private String stationName;
 
-    public Station(String line, String stationNumber, String stationCode, String stationName) {
+    public Station(String line, String stationCode, String stationID, String stationName) {
         this.line = line;
-        this.stationNumber = stationNumber;
         this.stationCode = stationCode;
+        this.stationID = stationID;
         this.stationName = stationName;
     }
 
@@ -17,20 +17,15 @@ public class Station {
         return line;
     }
 
-    public String getStationNumber() {
-        return stationNumber;
-    }
-
     public String getStationCode() {
         return stationCode;
     }
 
-    public String getStationName() {
-        return stationName;
+    public String getStationID() {
+        return stationID;
     }
 
-    @Override
-    public String toString() {
-        return stationName + " (" + stationCode + ")";
+    public String getStationName() {
+        return stationName;
     }
 }
