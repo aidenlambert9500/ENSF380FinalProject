@@ -20,4 +20,9 @@ public class WeatherReport {
 			e.printStackTrace();
 		}
 	}
+
+	public void display() {
+		// TODO Auto-generated method stub
+		
+	}
 }
