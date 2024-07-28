@@ -1,7 +1,14 @@
 package ca.ucalgary.edu.ensf380;
 
+/*
+ * @author: Aiden Lambert, Jacelynn Doan, Wesley Lui 
+ */
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -13,7 +20,7 @@ public class SubwayScreen extends JFrame {
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
 	private Timer trainTimer, newsTimer, weatherTimer;
 	private int newsIndex = 0;
-	private List<String> newsList;
+	private ArrayList<String> newsList;
 
 	public SubwayScreen(String[] args) {
 		this.args = args;
@@ -143,6 +150,22 @@ public class SubwayScreen extends JFrame {
 		newsTimer = new Timer(500, e -> updateNewsPanel());
 		newsTimer.start();
 
+		// TODO get paths from database and cycle through images
+			{
+			BufferedImage img = null;
+			try {img = ImageIO.read(new File("data/advertisements/LeBron-Tide-Ad.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// Create an ImageIcon from the BufferedImage
+			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+	        ImageIcon imageIcon = new ImageIcon(scaledImage);
+	        JLabel imageLabel = new JLabel(imageIcon);
+	
+	        // Add the imageLabel to the adPanel
+	        adPanel.add(imageLabel, BorderLayout.CENTER);
+	        adPanel.setPreferredSize(new Dimension(500, 300));
+			}
 		// Make the Frame visible
 		setVisible(true);
 	}
@@ -352,7 +375,7 @@ public class SubwayScreen extends JFrame {
 				} else {
 					try {
 						newsAPI.fetchNewsByKeyword(args[1]);
-						if (!newsList.isEmpty()) {
+						if (newsList != null) {
 							newsIndex = (newsIndex + 1) % newsList.size();
 							newsLabel.setText(newsList.get(newsIndex));
 						}
@@ -363,7 +386,6 @@ public class SubwayScreen extends JFrame {
 		} else { // if newsList isn't empty we iterate over to the next element and print to the screen
 			newsIndex = (newsIndex + 1) % newsList.size();
 			newsLabel.setText(newsList.get(newsIndex));
-			System.out.println("HERE!");
 		}
 	}
 
