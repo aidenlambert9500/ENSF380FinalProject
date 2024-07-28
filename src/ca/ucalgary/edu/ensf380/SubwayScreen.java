@@ -11,7 +11,7 @@ public class SubwayScreen extends JFrame {
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer timer, newsTimer;
+	private Timer trainTimer, newsTimer, weatherTimer;
 	private int newsIndex = 0;
 	private List<String> newsList;
 
@@ -44,8 +44,8 @@ public class SubwayScreen extends JFrame {
 			}
 		});
 		weatherLabel = new JLabel("Temperature:");
-		timeLabel = new JLabel("Time: ");
-		cityLabel = new JLabel("CITY");
+		timeLabel = new JLabel("TIME: ERROR");
+		cityLabel = new JLabel("CITY: ERROR");
 		weatherPanel.add(weatherLabel);
 		weatherPanel.add(timeLabel);
 		weatherPanel.add(cityLabel);
@@ -130,12 +130,14 @@ public class SubwayScreen extends JFrame {
 		add(newsPanel, newsGBC);
 		add(trainPanel, trainGBC);
 
-		// Update the weather information
+		// Update the weather information every 60 seconds
 		updateWeatherPanel();
+		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
+		weatherTimer.start();
 
 		// Set up the timer to update the station every 20 seconds
-		timer = new Timer(20000, e -> updateTrainPanel(trainPanel));
-		timer.start();
+		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+		trainTimer.start();
 
 		// Timer to update news every 100 milliseconds
 		newsTimer = new Timer(500, e -> updateNewsPanel());
