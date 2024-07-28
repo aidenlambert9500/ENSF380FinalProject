@@ -28,13 +28,21 @@ public class SubwayScreen extends JFrame {
 		// Create a section for the advertisements and big map
 		JPanel adPanel = new JPanel();
 		adPanel.setBackground(Color.LIGHT_GRAY);
-		adPanel.add(new JLabel("Ad Panel"));
+		adPanel.add(new JLabel("Advertisements") {
+			{
+				setFont(new Font("Serif", Font.BOLD, 20));
+			}
+		});
 		adPanel.setPreferredSize(new Dimension(500, 300));
 
 		// Create a section for the weather and time reports
 		JPanel weatherPanel = new JPanel();
 		weatherPanel.setBackground(Color.white);
-		weatherPanel.add(new JLabel("Weather"));
+		weatherPanel.add(new JLabel("Weather") {
+			{
+				setFont(new Font("Serif", Font.BOLD, 20));
+			}
+		});
 		weatherLabel = new JLabel("Temperature:");
 		timeLabel = new JLabel("Time: ");
 		cityLabel = new JLabel("CITY");
@@ -46,7 +54,11 @@ public class SubwayScreen extends JFrame {
 		// Create a section for the news
 		JPanel newsPanel = new JPanel();
 		newsPanel.setBackground(Color.cyan);
-		newsPanel.add(new JLabel("News Panel"));
+		newsPanel.add(new JLabel("News") {
+			{
+				setFont(new Font("Serif", Font.BOLD, 20));
+			}
+		});
 		newsPanel.setPreferredSize(new Dimension(700, 60));
 		newsLabel = new JLabel();
 		newsLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and type for news
@@ -56,8 +68,11 @@ public class SubwayScreen extends JFrame {
 		JPanel trainPanel = new JPanel();
 		trainPanel.setBackground(Color.white);
 		trainPanel.setLayout(new BorderLayout());
-		JLabel nextStationLabel = new JLabel("Next: ", JLabel.CENTER);
-		nextStationLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Larger font size for the "Next" label
+		JLabel nextStationLabel = new JLabel("Next: ", JLabel.CENTER) {
+			{
+				setFont(new Font("Serif", Font.BOLD, 20));
+			}
+		};
 		trainPanel.add(nextStationLabel, BorderLayout.SOUTH);
 		addTrainInformation(trainPanel); // Add train information to the panel
 		trainPanel.setPreferredSize(new Dimension(700, 60));
@@ -123,7 +138,7 @@ public class SubwayScreen extends JFrame {
 		timer.start();
 
 		// Timer to update news every 100 milliseconds
-		newsTimer = new Timer(100, e -> updateNewsPanel());
+		newsTimer = new Timer(500, e -> updateNewsPanel());
 		newsTimer.start();
 
 		// Make the Frame visible
