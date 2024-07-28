@@ -333,19 +333,39 @@ public class SubwayScreen extends JFrame {
 
 	private void updateNewsPanel() {
 		NewsAPI newsAPI = new NewsAPI();
-		try {
-			newsAPI.fetchNews(); // Fetch top headlines
-			newsList = newsAPI.getNews();
-			if (!newsList.isEmpty()) {
-				newsIndex = (newsIndex + 1) % newsList.size();
-				newsLabel.setText(newsList.get(newsIndex));
-			}
-		} catch (IOException e) {
-			newsLabel.setText("Failed to fetch news");
+		// Only fetches using the API if the news list is null (empty). Ensures we aren't fetching every .5 seconds
+		if(newsList == null) {
+		// fetches news on second string in arg otherwise it fetches general news
+			if(args.length != 2 || args[1] == null) {	
+					try {
+						newsAPI.fetchNews(); // Fetch top headlines
+						newsList = newsAPI.getNews();
+						if (!newsList.isEmpty()) {
+							newsIndex = (newsIndex + 1) % newsList.size();
+							newsLabel.setText(newsList.get(newsIndex));
+						}
+					} catch (IOException e) {
+						newsLabel.setText("Failed to fetch news");
+					}
+				} else {
+					try {
+						newsAPI.fetchNewsByKeyword(args[1]);
+						if (!newsList.isEmpty()) {
+							newsIndex = (newsIndex + 1) % newsList.size();
+							newsLabel.setText(newsList.get(newsIndex));
+						}
+					} catch (IOException e) {
+						newsLabel.setText("Failed to fetch news");
+					}
+				}
+		} else { // if newsList isn't empty we iterate over to the next element and print to the screen
+			newsIndex = (newsIndex + 1) % newsList.size();
+			newsLabel.setText(newsList.get(newsIndex));
+			System.out.println("HERE!");
 		}
 	}
 
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> new SubwayScreen(args));
+		SwingUtilities.invokeLater(() -> new SubwayScreen(args));	
 	}
 }
