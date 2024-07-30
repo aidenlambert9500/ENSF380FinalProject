@@ -74,7 +74,7 @@ public class SubwayScreen extends JFrame {
 			}
 		});
 		newsPanel.setPreferredSize(new Dimension(700, 60));
-		newsLabel = new JLabel();	
+		newsLabel = new JLabel();
 		newsLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and type for news
 		setFixedSize(newsLabel, 120, 30);
 		newsPanel.add(newsLabel);
@@ -145,16 +145,16 @@ public class SubwayScreen extends JFrame {
 		add(newsPanel, newsGBC);
 		add(trainPanel, trainGBC);
 
-//		// Update the weather information
-//		updateWeatherPanel();
-//
-//		// Set up the timer to update the station every 20 seconds
-//		timer = new Timer(20000, e -> updateTrainPanel(trainPanel));
-//		timer.start();
-//
-//		// Timer to update news every 100 milliseconds
-//		newsTimer = new Timer(500, e -> updateNewsPanel());
-//		newsTimer.start();
+		// Update the weather information
+		updateWeatherPanel();
+
+		// Set up the timer to update the station every 20 seconds
+		timer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+		timer.start();
+
+		// Timer to update news every 100 milliseconds
+		newsTimer = new Timer(500, e -> updateNewsPanel());
+		newsTimer.start();
 
 		// TODO get paths from database and cycle through images
 		{
@@ -197,40 +197,27 @@ public class SubwayScreen extends JFrame {
 		}
 
 		for (int i = start; i < end; i++) {
-		    JPanel stationPanel = new JPanel();
-		    stationPanel.setLayout(new BorderLayout());
+			JPanel stationPanel = new JPanel();
+			stationPanel.setLayout(new BorderLayout());
 
-		    JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
-		    stationLabel.setFont(new Font("Arial", Font.PLAIN, 14)); // Smaller font for station names
+			JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
+			stationLabel.setFont(new Font("Arial", Font.PLAIN, 12)); // Smaller font for station names
+			JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
 
-		    JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a hollow circle (○)
-		    circleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Adjust the font size to make the dot larger
+			if (i == currentStationIndex) {
+				circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
+				circleLabel.setForeground(Color.RED);
+			}
 
-		    if (i == currentStationIndex) {
-		        circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
-		        circleLabel.setForeground(Color.RED);
-		    } else {
-		        circleLabel.setForeground(Color.BLACK); // Hollow dots
-		    }
-
-		    stationPanel.add(circleLabel, BorderLayout.CENTER);
-		    stationPanel.add(stationLabel, BorderLayout.NORTH); // Move station name closer to the dot
-		    mapPanel.add(stationPanel);
+			// Add station label closer to the circle
+			stationPanel.add(circleLabel, BorderLayout.CENTER);
+			stationPanel.add(stationLabel, BorderLayout.NORTH); // Move station name closer to the dot
+			mapPanel.add(stationPanel);
 		}
 
-
-
-		Font largerFont = new Font("Arial", Font.BOLD, 15 ); 
-
-		// Create the label with the "Next:" text
-		JLabel nextLabel = new JLabel("Next: " + stations.get((currentStationIndex + 1) % stations.size()).getStationName(), JLabel.CENTER);
-
-		// Set the custom font for the label
-		nextLabel.setFont(largerFont);
-
-		// Add the label to the panel
 		trainPanel.add(mapPanel, BorderLayout.CENTER);
-		trainPanel.add(nextLabel, BorderLayout.SOUTH);
+		trainPanel.add(new JLabel("Next: " + stations.get((currentStationIndex + 1) % stations.size()).getStationName(),
+				JLabel.CENTER), BorderLayout.SOUTH);
 
 		currentStationIndex = (currentStationIndex + 1) % stations.size();
 
