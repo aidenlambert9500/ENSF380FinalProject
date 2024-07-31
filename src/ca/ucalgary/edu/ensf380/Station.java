@@ -1,31 +1,32 @@
 package ca.ucalgary.edu.ensf380; 
 
 class Station {
-    private String line;
     private String stationCode;
-    private String stationID;
     private String stationName;
+    private final double x;
+    private final double y;
 
-    public Station(String line, String stationCode, String stationID, String stationName) {
-        this.line = line;
+    public Station(String stationCode, String stationName, double y, double x) {
+        this.x = x;
+        this.y = y;
         this.stationCode = stationCode;
-        this.stationID = stationID;
         this.stationName = stationName;
-    }
-
-    public String getLine() {
-        return line;
     }
 
     public String getStationCode() {
         return stationCode;
     }
 
-    public String getStationID() {
-        return stationID;
-    }
 
     public String getStationName() {
         return stationName;
+    }
+    
+    public double getXCoord() {
+        return x;
+    }
+
+    public double getYCoord() {
+        return y;
     }
 }
