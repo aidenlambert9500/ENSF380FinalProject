@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SubwayScreen extends JFrame {
+	// Member Variables
 	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
 	private JPanel adPanel;
 	private String[] args;
@@ -27,8 +28,10 @@ public class SubwayScreen extends JFrame {
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	private int adCounter = 0, mapCounter = 0;
 
+
 	
  	public SubwayScreen(String[] args) {
+ 		// Constructor (launches gui)
 		this.args = args;
 		this.stations = initializeStations();
 		
@@ -67,8 +70,13 @@ public class SubwayScreen extends JFrame {
 			}
 		});
 		weatherLabel = new JLabel("Temperature:");
+		setFixedSize(weatherLabel, 120, 30);
+		weatherLabel.setVerticalAlignment(JLabel.BOTTOM);
 		timeLabel = new JLabel("Time: ");
+		setFixedSize(timeLabel, 120, 30);
 		cityLabel = new JLabel("CITY");
+		setFixedSize(cityLabel, 120, 30);
+
 		weatherPanel.add(weatherLabel);
 		weatherPanel.add(timeLabel);
 		weatherPanel.add(cityLabel);
@@ -85,6 +93,7 @@ public class SubwayScreen extends JFrame {
 		newsPanel.setPreferredSize(new Dimension(700, 60));
 		newsLabel = new JLabel();
 		newsLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and type for news
+		setFixedSize(newsLabel, 120, 30);
 		newsPanel.add(newsLabel);
 
 		// Create a section for the trains
@@ -163,8 +172,8 @@ public class SubwayScreen extends JFrame {
 		// Timer to update news every 100 milliseconds
 		newsTimer = new Timer(500, e -> updateNewsPanel());
 		newsTimer.start();
-		
-		
+
+			
 		// Timer to update the ads every 10 seconds
 		// TODO make the adPanel show the big map every other refresh
 		
@@ -187,6 +196,7 @@ public class SubwayScreen extends JFrame {
 		updateTrainPanel(trainPanel);
 	}
 
+	// Method to update current train station and next stations represented
 	private void updateTrainPanel(JPanel trainPanel) {
 		trainPanel.removeAll();
 		JPanel mapPanel = new JPanel();
@@ -230,6 +240,7 @@ public class SubwayScreen extends JFrame {
 		trainPanel.repaint();
 	}
 
+	// List array of Station variables containing all stations
 	private List<Station> initializeStations() {
 		List<Station> stations = new ArrayList<>();
 		stations.add(new Station("R", "01", "R01", "Maplewood Station"));
@@ -355,6 +366,7 @@ public class SubwayScreen extends JFrame {
 		return stations;
 	}
 
+	// Method to fetch Weather and Time from API's
 	private void updateWeatherPanel() {
 		if (args == null || args.length == 0) {
 			weatherLabel.setText("Please provide a city as a command line argument.");
@@ -369,38 +381,42 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
+	// Method to fetch news head titles based on keyword or world news from News API
 	private void updateNewsPanel() {
 		NewsAPI newsAPI = new NewsAPI();
-		// Only fetches using the API if the news list is null (empty). Ensures we aren't fetching every .5 seconds
-		if(newsList == null) {
-		// fetches news on second string in arg otherwise it fetches general news
-			if(args.length != 2 || args[1] == null) {	
-					try {
-						newsAPI.fetchNews(); // Fetch top headlines
-						newsList = newsAPI.getNews();
-						if (!newsList.isEmpty()) {
-							newsIndex = (newsIndex + 1) % newsList.size();
-							newsLabel.setText(newsList.get(newsIndex));
-						}
-					} catch (IOException e) {
-						newsLabel.setText("Failed to fetch news");
+		// Only fetches using the API if the news list is null (empty). Ensures we
+		// aren't fetching every .5 seconds
+		if (newsList == null) {
+			// fetches news on second string in arg otherwise it fetches general news
+			if (args.length != 2 || args[1] == null) {
+				try {
+					newsAPI.fetchNews(); // Fetch top headlines
+					newsList = newsAPI.getNews();
+					if (!newsList.isEmpty()) {
+						newsIndex = (newsIndex + 1) % newsList.size();
+						newsLabel.setText(newsList.get(newsIndex));
 					}
-				} else {
-					try {
-						newsAPI.fetchNewsByKeyword(args[1]);
-						if (newsList != null) {
-							newsIndex = (newsIndex + 1) % newsList.size();
-							newsLabel.setText(newsList.get(newsIndex));
-						}
-					} catch (IOException e) {
-						newsLabel.setText("Failed to fetch news");
-					}
+				} catch (IOException e) {
+					newsLabel.setText("Failed to fetch news");
 				}
-		} else { // if newsList isn't empty we iterate over to the next element and print to the screen
+			} else {
+				try {
+					newsAPI.fetchNewsByKeyword(args[1]);
+					if (newsList != null) {
+						newsIndex = (newsIndex + 1) % newsList.size();
+						newsLabel.setText(newsList.get(newsIndex));
+					}
+				} catch (IOException e) {
+					newsLabel.setText("Failed to fetch news");
+				}
+			}
+		} else { // if newsList isn't empty we iterate over to the next element and print to the
+					// screen
 			newsIndex = (newsIndex + 1) % newsList.size();
 			newsLabel.setText(newsList.get(newsIndex));
 		}
 	}
+
 
 	private void updateAdPanel(int adCount) {
 		BufferedImage img = null;
@@ -432,6 +448,15 @@ public class SubwayScreen extends JFrame {
 		}
 		    
 		adCounter++;
+	}
+	
+
+	// Method to fix the size of JLabels
+	private void setFixedSize(JLabel label, int width, int height) {
+		Dimension size = new Dimension(width, height);
+		label.setPreferredSize(size);
+		label.setMinimumSize(size);
+		label.setMaximumSize(size);
 	}
 	
 	public static void main(String[] args) {
