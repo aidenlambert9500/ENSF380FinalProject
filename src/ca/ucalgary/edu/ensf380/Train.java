@@ -1,3 +1,7 @@
+/*
+ * @author Jacelynn Doan, Aiden Lambert, Wesley Lui
+ */
+
 package ca.ucalgary.edu.ensf380;
 
 
@@ -5,15 +9,13 @@ public class Train {
     private final String trainNum;
     private final Line currentLine;
     private String direction;
-    private String destination;
     private Station currentStation;
 
 
-    public Train(String trainNum, Line currentLine, String direction, String destination) {
+    public Train(String trainNum, Line currentLine, String direction) {
         this.trainNum = trainNum;
         this.currentLine = currentLine;
         this.direction = direction;
-        this.destination = destination;
     }
 
 

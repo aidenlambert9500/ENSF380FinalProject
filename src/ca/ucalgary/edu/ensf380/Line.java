@@ -1,3 +1,6 @@
+/*
+ * @author Jacelynn Doan, Aiden Lambert, Wesley Lui
+ */
 package ca.ucalgary.edu.ensf380;
 
 import java.util.List;
