@@ -3,15 +3,31 @@ use ads;
 
 create table advertisements (
 	id int auto_increment Primary key,
-    file_path varchar(255) not null,
-	title varchar(255) not null
+    file_path varchar(255) not null
 );
 
-Insert into advertisements (file_path , title) 
-values ('/path/to/testfile.png', 'Test Advertisement');
+Insert into advertisements (file_path) 
+values ('data/advertisements/LeBron-Tide-Ad.png');
 
-Insert into advertisements (file_path , title) 
-values ('/path/to/2ndtestfile.pdf', 'Test PDF');
+Insert into advertisements (file_path) 
+values ('data/advertisements/Barbie-Ad.jpg');
 
+Insert into advertisements (file_path) 
+values ('data/advertisements/Cheezit-Ad.png');
+
+Insert into advertisements (file_path) 
+values ('data/advertisements/CocaCola-Ad.jpg');
+
+Insert into advertisements (file_path) 
+values ('data/advertisements/Ford-Truck-Ad.jpg');
+
+Insert into advertisements (file_path) 
+values ('data/advertisements/McDonalds-Ad.png');
+
+Insert into advertisements (file_path) 
+values ('data/advertisements/Nike-Ad.png');
+
+Insert into advertisements (file_path) 
+values ('data/advertisements/Nissan-Ad.jpg');
 
 Select * from advertisements;

@@ -14,6 +14,7 @@ public class Database {
 	private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/ads";
 	private static final String USER = "root";
 	private static final String PASSWORD = "30195900";
+	private ArrayList<String> adPaths = new ArrayList<String>();
 	
 	public Database() {
 		
@@ -29,9 +30,8 @@ public class Database {
 	}
 	
 	// method returns an ArrayList<String> of all the file paths of the ads in the database
-	public ArrayList<String> getAds() {
-		ArrayList<String> adPaths = new ArrayList<String>();
-		String query = "SELECT * from advertisements";
+	public ArrayList<String> getFilePaths() {
+		String query = "Select * from advertisements";
 		// try to execute the query and throws any potential errors
 		try {
 			Statement myStatement = dbConnection.createStatement();
@@ -46,5 +46,13 @@ public class Database {
 		return adPaths;
 	}
 	
+	public ArrayList<Advertisements> getAds(){
+		adPaths = getFilePaths();
+		ArrayList<Advertisements> ads = new ArrayList<Advertisements>();
+		for(String ad : adPaths) {
+			ads.add(new Advertisements(ad));
+		}
+		return ads;
+	}
 }
 

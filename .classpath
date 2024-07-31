@@ -7,8 +7,8 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libraries/mysql-connector-j-9.0.0.jar"/>
-	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/gson-2.8.6.jar"/>
-	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/jsoup-1.18.1.jar"/>
-	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/WeatherParser.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aiden/OneDrive/School/ENSF 380/Summer/finalProject/ENSF380FinalProject/libraries/gson-2.8.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aiden/OneDrive/School/ENSF 380/Summer/finalProject/ENSF380FinalProject/libraries/jsoup-1.18.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aiden/OneDrive/School/ENSF 380/Summer/finalProject/ENSF380FinalProject/libraries/WeatherParser.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

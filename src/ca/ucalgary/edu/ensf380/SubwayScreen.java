@@ -14,18 +14,34 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SubwayScreen extends JFrame {
-	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel;
+	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
+	private JPanel adPanel;
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer timer, newsTimer;
+	private Timer timer, newsTimer, adTimer;
 	private int newsIndex = 0;
 	private ArrayList<String> newsList;
+	private Database db = new Database();
+	private ArrayList<Advertisements> ads;
+	private ArrayList<String> adPaths = new ArrayList<String>();
+	private int adCounter = 0, mapCounter = 0;
 
-	public SubwayScreen(String[] args) {
+	
+ 	public SubwayScreen(String[] args) {
 		this.args = args;
 		this.stations = initializeStations();
-
+		
+		// Connect to the database
+		db.connect();
+		
+		// Get ad paths from database 
+		ads = db.getAds();
+		for(Advertisements ad : ads) {
+			adPaths.add(ad.getFilePath());
+		}
+		
+		
 		// Initialize the frame with a title and layout
 		setTitle("SubwayScreen");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,7 +49,7 @@ public class SubwayScreen extends JFrame {
 		setLayout(new GridBagLayout());
 
 		// Create a section for the advertisements and big map
-		JPanel adPanel = new JPanel();
+		adPanel = new JPanel();
 		adPanel.setBackground(Color.LIGHT_GRAY);
 		adPanel.add(new JLabel("Advertisements") {
 			{
@@ -147,23 +163,22 @@ public class SubwayScreen extends JFrame {
 		// Timer to update news every 100 milliseconds
 		newsTimer = new Timer(500, e -> updateNewsPanel());
 		newsTimer.start();
-
-		// TODO get paths from database and cycle through images
-			{
-			BufferedImage img = null;
-			try {img = ImageIO.read(new File("data/advertisements/LeBron-Tide-Ad.png"));
-			} catch (IOException e) {
-				e.printStackTrace();
+		
+		
+		// Timer to update the ads every 10 seconds
+		// TODO make the adPanel show the big map every other refresh
+		
+		updateAdPanel(adCounter);
+		adTimer = new Timer(10000, e -> {
+			if(mapCounter % 2 != 0) {
+				updateAdPanel(adCounter);
+			} else {
+				System.out.println("Implement function to make big map show here");
 			}
-			// Create an ImageIcon from the BufferedImage
-			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
-	        ImageIcon imageIcon = new ImageIcon(scaledImage);
-	        JLabel imageLabel = new JLabel(imageIcon);
-	
-	        // Add the imageLabel to the adPanel
-	        adPanel.add(imageLabel, BorderLayout.CENTER);
-	        adPanel.setPreferredSize(new Dimension(500, 300));
-			}
+			mapCounter++;
+		});
+		adTimer.start();
+		
 		// Make the Frame visible
 		setVisible(true);
 	}
@@ -387,7 +402,39 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
+	private void updateAdPanel(int adCount) {
+		BufferedImage img = null;
+		int index = adCounter % adPaths.size();
+				
+		try {
+			img = ImageIO.read(new File(adPaths.get(adCounter)));
+		} catch (IOException e){
+				e.printStackTrace();
+		}
+		
+		if(img != null) {
+			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+			ImageIcon imageIcon = new ImageIcon(scaledImage);
+			JLabel newImageLabel = new JLabel(imageIcon);
+		
+		
+		if (imageLabel != null) {
+            imageLabel.setIcon(imageIcon); // Update the existing label with the new image
+        } else {
+            imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
+            adPanel.add(imageLabel, BorderLayout.CENTER);
+        	}	
+			
+		// refresh the adPanel
+			adPanel.setPreferredSize(new Dimension(500, 300));
+			adPanel.revalidate();
+			adPanel.repaint();
+		}
+		    
+		adCounter++;
+	}
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new SubwayScreen(args));
-	}
+		}
 }
