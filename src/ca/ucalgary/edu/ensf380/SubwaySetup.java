@@ -15,94 +15,89 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SubwaySetup {
-	// Member variables
-	private static Line red;
-	private static Line blue;
-	private static Line green;
-	private static List<Train> trains = new ArrayList<>();
+	private static List<Station> stationsList = new ArrayList<>();
+	private static List<Line> lineList = new ArrayList<>();
+	private static List<Train> trainList = new ArrayList<>();
+	private static Line red, blue, green;
 
-	public static Line getRedLine() {
-		return red;
+	public static void initializeSubwaySystem() {
+		loadStationsFromFile("data\\subway.csv");
+		initializeLines();
+		assignStationsToLines();
+		createTrains();
+		updateTrainPositions("out");
 	}
 
-	public static Line getBlueLine() {
-		return blue;
-	}
-
-	public static Line getGreenLine() {
-		return green;
-	}
-
-	public static List<Train> getTrains() {
-		return trains;
-	}
-
-	public static void getSubwaySystem() {
-		List<Station> stations = new ArrayList<>();
-		List<Line> lines = new ArrayList<>();
-
-		try (BufferedReader reader = new BufferedReader(new FileReader("data\\subway.csv"))) {
+	private static void loadStationsFromFile(String filePath) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 			String line;
-			reader.readLine();
+			reader.readLine(); // Skip header
 			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(",");
-				String stationCode = parts[3];
-				String stationName = parts[4];
-				double x = Double.parseDouble(parts[5]);
-				double y = Double.parseDouble(parts[6]);
-				Station station = new Station(stationCode, stationName, x, y);
-				stations.add(station);
+				String[] details = line.split(",");
+				String stationCode = details[3];
+				String stationName = details[4];
+				double xCoord = Double.parseDouble(details[5]);
+				double yCoord = Double.parseDouble(details[6]);
+				Station station = new Station(stationCode, stationName, xCoord, yCoord);
+				stationsList.add(station);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		red = new Line("R");
-		blue = new Line("B");
-		green = new Line("G");
-
-		for (Station station : stations) {
-			String lineName = station.getStationCode().substring(0, 1);
-			if (lineName.equals("R")) {
-				red.addStation(station);
-			} else if (lineName.equals("B")) {
-				blue.addStation(station);
-			} else if (lineName.equals("G")) {
-				green.addStation(station);
-			}
-		}
-
-		for (int i = 1; i <= 12; i++) {
-			Line line;
-			if (i <= 4) {
-				line = red;
-			} else if (i <= 8) {
-				line = blue;
-			} else {
-				line = green;
-			}
-			Train train = new Train("T" + i, line, null);
-			trains.add(train);
-		}
-
-		lines.add(red);
-		lines.add(blue);
-		lines.add(green);
-
-		String folderPath = "out";
-		updateTrainsFromCSV(folderPath, trains);
 	}
 
-	private static void updateTrainsFromCSV(String csvFilePath, List<Train> trains) {
+	private static void initializeLines() {
+		red = new Line("Red");
+		blue = new Line("Blue");
+		green = new Line("Green");
+	}
+
+	private static void assignStationsToLines() {
+		for (Station station : stationsList) {
+			String lineInitial = station.getStationCode().substring(0, 1);
+			switch (lineInitial) {
+			case "R":
+				red.addStation(station);
+				break;
+			case "B":
+				blue.addStation(station);
+				break;
+			case "G":
+				green.addStation(station);
+				break;
+			}
+		}
+	}
+
+	private static void createTrains() {
+		for (int i = 1; i <= 12; i++) {
+			Line assignedLine;
+			if (i <= 4) {
+				assignedLine = red;
+			} else if (i <= 8) {
+				assignedLine = blue;
+			} else {
+				assignedLine = green;
+			}
+			Train train = new Train("T" + i, assignedLine, null);
+			trainList.add(train);
+		}
+
+		lineList.add(red);
+		lineList.add(blue);
+		lineList.add(green);
+	}
+
+	private static void updateTrainPositions(String directoryPath) {
 		try {
-			Path folder = Paths.get(csvFilePath);
-			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder, "*.csv");
+			Path dir = Paths.get(directoryPath);
+			DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv");
 			List<Path> csvFiles = new ArrayList<>();
-			for (Path file : directoryStream) {
+			for (Path file : stream) {
 				csvFiles.add(file);
 			}
 
-			Path mostRecentCSV = csvFiles.stream().max(Comparator.comparingLong(file -> {
+			Path latestCSV = csvFiles.stream().max(Comparator.comparingLong(file -> {
 				try {
 					return Files.getLastModifiedTime(file).toMillis();
 				} catch (IOException e) {
@@ -111,48 +106,41 @@ public class SubwaySetup {
 				}
 			})).orElse(null);
 
-			if (mostRecentCSV != null) {
-				try (BufferedReader reader = new BufferedReader(new FileReader(mostRecentCSV.toFile()))) {
-					String line;
-					reader.readLine();
-					int lineNumber = 1;
-					while ((line = reader.readLine()) != null) {
-						lineNumber++;
-
-						String[] parts = line.split(",");
-						if (parts.length < 4) {
-							System.err.println("Invalid CSV format on line " + lineNumber + ": " + line);
-							continue;
-						}
-
-						String trainNum = parts[1];
-						String stationCode = parts[2];
-						String direction = parts[3];
-						String trainNumber = "T" + trainNum;
-
-						Train matchingTrain = null;
-						for (Train train : trains) {
-							if (train.getTrainNum().equals(trainNumber)) {
-								matchingTrain = train;
-								break;
-							}
-						}
-
-						if (matchingTrain != null) {
-							matchingTrain.setDirection(direction);
-
-							Line line1 = matchingTrain.getCurrentLine();
-							Station currentStation = line1.getStationByCode(stationCode);
-
-							matchingTrain.setCurrentStation(currentStation);
-						}
-
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			if (latestCSV != null) {
+				processCSVFile(latestCSV);
 			} else {
-				System.out.println("No CSV files found in the folder.");
+				System.out.println("No CSV files found in the directory.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void processCSVFile(Path csvFilePath) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath.toFile()))) {
+			String line;
+			reader.readLine(); // Skip header
+			int lineNum = 1;
+			while ((line = reader.readLine()) != null) {
+				lineNum++;
+				String[] details = line.split(",");
+				if (details.length < 4) {
+					System.err.println("Invalid CSV format on line " + lineNum + ": " + line);
+					continue;
+				}
+
+				String trainId = "T" + details[1];
+				String stationCode = details[2];
+				String direction = details[3];
+
+				Train foundTrain = trainList.stream().filter(t -> t.getTrainNum().equals(trainId)).findFirst()
+						.orElse(null);
+				if (foundTrain != null) {
+					foundTrain.setDirection(direction);
+					Line currentLine = foundTrain.getCurrentLine();
+					Station currentStation = currentLine.getStationByCode(stationCode);
+					foundTrain.setCurrentStation(currentStation);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
