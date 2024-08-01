@@ -15,10 +15,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SubwaySetup {
-	private static List<Station> stationsList = new ArrayList<>();
-	private static List<Line> lineList = new ArrayList<>();
-	private static List<Train> trainList = new ArrayList<>();
+	private static ArrayList<Station> stationsList = new ArrayList<>();
+	private static ArrayList<Line> lineList = new ArrayList<>();
+	private static ArrayList<Train> trainList = new ArrayList<>();
 	private static Line red, blue, green;
+
+	// Getters
+	public static List<Train> getTrains() {
+		return trainList;
+	}
 
 	public static void initializeSubwaySystem() {
 		loadStationsFromFile("data\\subway.csv");
