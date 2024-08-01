@@ -7,9 +7,8 @@ package ca.ucalgary.edu.ensf380;
 public class Advertisements {
     private String filePath;
     
-
-    public Advertisements(String filepath) {
-        this.filePath = filepath;   
+    public Advertisements(String filePath) {
+        this.filePath = filePath;   
     }
 
     public String getFilePath() {

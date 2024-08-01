@@ -27,7 +27,7 @@ public class SubwayScreen extends JFrame {
 	private ArrayList<Advertisements> ads;
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	private int adCounter = 0, mapCounter = 0;
-
+	private final String MAP_PATH = "data/Trains.png";
 
 	
  	public SubwayScreen(String[] args) {
@@ -450,7 +450,34 @@ public class SubwayScreen extends JFrame {
 		adCounter++;
 	}
 	
-
+	private void showMap() {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(mapPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(img != null) {
+			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+			ImageIcon imageIcon = new ImageIcon(scaledImage);
+			JLabel newImageLabel = new JLabel(imageIcon);
+		
+		
+		if (imageLabel != null) {
+            imageLabel.setIcon(imageIcon); // Update the existing label with the new image
+        } else {
+            imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
+            adPanel.add(imageLabel, BorderLayout.CENTER);
+        	}	
+			
+		// refresh the adPanel
+			adPanel.setPreferredSize(new Dimension(500, 300));
+			adPanel.revalidate();
+			adPanel.repaint();
+		}
+	}
+	
 	// Method to fix the size of JLabels
 	private void setFixedSize(JLabel label, int width, int height) {
 		Dimension size = new Dimension(width, height);
