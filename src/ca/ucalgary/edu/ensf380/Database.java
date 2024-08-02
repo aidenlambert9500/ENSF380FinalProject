@@ -1,13 +1,15 @@
+package ca.ucalgary.edu.ensf380;
+
 /*
  * @author Aiden Lambert, Wesley Lui, Jacelynn Doan
  */
 
-package ca.ucalgary.edu.ensf380;
-
 import java.sql.*;
 import java.util.ArrayList;
 
-
+/**
+ * A class to link to an SQL database and retrieve String filepaths
+ */
 public class Database {
 	private Connection dbConnection;
 	private ResultSet results;
@@ -16,10 +18,16 @@ public class Database {
 	private static final String PASSWORD = "Jacelynn6.";
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	
+	/**
+	 * Constructor to initialize a new Database object
+	 */
 	public Database() {
 		
 	}
 	
+	/**
+	 * A method to connect to the database using a url, username, and password
+	 */
 	public void connect() {
 		// try to connect to the database, catches any errors
 		try {
@@ -29,7 +37,10 @@ public class Database {
 		}
 	}
 	
-	// method returns an ArrayList<String> of all the file paths of the ads in the database
+	/**
+	 * A method to get the filepaths from the advertisements SQL table
+	 * @return an ArrayList of Strings containing all the filepaths present in the database table
+	 */
 	public ArrayList<String> getFilePaths() {
 		String query = "Select * from advertisements";
 		// try to execute the query and throws any potential errors
@@ -46,6 +57,10 @@ public class Database {
 		return adPaths;
 	}
 	
+	/**
+	 * A method that calls getFilePaths() and uses its return value to initialize an ArrayList of Advertisement objects
+	 * @return an ArrayList of Advertisement objects 
+	 */
 	public ArrayList<Advertisements> getAds(){
 		adPaths = getFilePaths();
 		ArrayList<Advertisements> ads = new ArrayList<Advertisements>();
