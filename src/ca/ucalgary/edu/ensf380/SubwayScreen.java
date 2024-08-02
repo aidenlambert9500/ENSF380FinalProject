@@ -20,7 +20,7 @@ public class SubwayScreen extends JFrame {
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer trainTimer, newsTimer, adTimer, weatherTimer;
+	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer;
 	private int newsIndex = 0;
 	private ArrayList<String> newsList;
 	private Database db = new Database();
@@ -36,7 +36,7 @@ public class SubwayScreen extends JFrame {
 		this.args = args;
 		SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
 		trains = SubwaySetup.getTrains();
-
+		stations = SubwaySetup.getStations(); // Initialize the stations list
 		// Connect to the database
 		db.connect();
 
@@ -163,17 +163,22 @@ public class SubwayScreen extends JFrame {
 		add(newsPanel, newsGBC);
 		add(trainPanel, trainGBC);
 
-		// Update the weather information
-		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
-		weatherTimer.start();
+//		// Update the weather information
+//		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
+//		weatherTimer.start();
 
 		// Set up the timer to update the station every 20 seconds
-		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
-		trainTimer.start();
+//		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+//		trainTimer.start();
+        stationChangeTimer = new Timer(3000, e -> {
+            currentStationIndex = (currentStationIndex + 1) % stations.size();
+            updateTrainPanel(trainPanel);
+        });
+        stationChangeTimer.start();
 
-		// Timer to update news every 100 milliseconds
-		newsTimer = new Timer(500, e -> updateNewsPanel());
-		newsTimer.start();
+//		// Timer to update news every 100 milliseconds
+//		newsTimer = new Timer(500, e -> updateNewsPanel());
+//		newsTimer.start();
 
 		// Timer to update the ads every 10 seconds
 		// TODO make the adPanel show the big map every other refresh
@@ -336,7 +341,7 @@ public class SubwayScreen extends JFrame {
 	private void showMap() {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File(mapPath));
+			img = ImageIO.read(new File(MAP_PATH));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

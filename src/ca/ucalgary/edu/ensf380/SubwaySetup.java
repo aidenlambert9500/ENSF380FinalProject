@@ -19,14 +19,18 @@ public class SubwaySetup {
 	private static ArrayList<Line> lineList = new ArrayList<>();
 	private static ArrayList<Train> trainList = new ArrayList<>();
 	private static Line red, blue, green;
-
-	// Getters
-	public static List<Train> getTrains() {
-		return trainList;
+	
+	public static List<Station> getStations() {
+	    return stationsList;
 	}
 
+	// Getters
+    public static List<Train> getTrains() {
+        return trainList;
+    }
+    
 	public static void initializeSubwaySystem() {
-		loadStationsFromFile("data\\subway.csv");
+		loadStationsFromFile("data/subway.csv");
 		initializeLines();
 		assignStationsToLines();
 		createTrains();

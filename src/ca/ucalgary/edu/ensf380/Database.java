@@ -13,7 +13,7 @@ public class Database {
 	private ResultSet results;
 	private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/ads";
 	private static final String USER = "root";
-	private static final String PASSWORD = "30195900";
+	private static final String PASSWORD = "Jacelynn6.";
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	
 	public Database() {
