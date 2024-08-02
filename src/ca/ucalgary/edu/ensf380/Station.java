@@ -6,7 +6,7 @@ class Station {
     private final double x;
     private final double y;
 
-    public Station(String stationCode, String stationName, double y, double x) {
+    public Station(String stationCode, String stationName, double x, double y) {
         this.x = x;
         this.y = y;
         this.stationCode = stationCode;
