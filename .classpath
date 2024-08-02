@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/gson-2.8.6.jar"/>
 	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/jsoup-1.18.1.jar"/>
 	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/ENSF380/finalProject/libraries/WeatherParser.jar"/>
+	<classpathentry kind="lib" path="/Users/jacelynndoan/Desktop/jl1.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
