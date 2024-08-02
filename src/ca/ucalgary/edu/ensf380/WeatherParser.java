@@ -10,16 +10,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
 
-/**
- * A class to retrieve weather and time information from specified cities
- */
 public class WeatherParser {
 
-	/**
-	 * A method to get the current weather in a specified city
-	 * @param city name of the city to retrieve the weather from
-	 * @return the temperature of city in String format
-	 */
 	public String getWeatherInfo(String city) {
 		String url = "https://wttr.in/" + city;
 
@@ -54,11 +46,6 @@ public class WeatherParser {
 		}
 	}
 
-	/**
-	 * A method to get the current time at a specified city
-	 * @param city name of the city to get the time of
-	 * @return the time in a String format
-	 */
 	public String getTime(String city) {
 		String url = "http://worldtimeapi.org/api/timezone/America/" + city;
 
@@ -79,5 +66,21 @@ public class WeatherParser {
 			e.printStackTrace();
 			return "Error fetching time data.";
 		}
+	}
+
+	public static void main(String[] args) {
+		// Use command-line argument for the city name
+		if (args.length == 0) {
+			System.out.println("Please provide a city as a command line argument.");
+			return;
+		}
+
+		String city = args[0];
+		WeatherParser weatherParser = new WeatherParser();
+		String temperature = weatherParser.getWeatherInfo(city);
+		String time = weatherParser.getTime(city);
+		System.out.println("City: " + city);
+		System.out.println(temperature);
+		System.out.println(time);
 	}
 }
