@@ -289,41 +289,33 @@ public class SubwayScreen extends JFrame {
 
 
 	// Play the audio announcement for the given station name
+	// Play the audio announcement for the given station name
 	private void playStationAnnouncement(String stationName) {
-		// Trim stationName to avoid issues with leading/trailing spaces
-		stationName = stationName.trim();
-		String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
-		System.out.println("Attempting to play audio file: " + audioFilePath);
-		File audioFile = new File(audioFilePath);
+	    // Trim stationName to avoid issues with leading/trailing spaces
+	    stationName = stationName.trim();
+	    String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
+	    System.out.println("Attempting to play audio file: " + audioFilePath);
+	    File audioFile = new File(audioFilePath);
 
-		// Check if the directory and files exist
-		File directory = new File("data/stationAudio/");
-		String[] files = directory.list();
-		if (files != null) {
-			System.out.println("Files in directory:");
-			for (String file : files) {
-				System.out.println(file);
-			}
-		} else {
-			System.out.println("Directory does not exist or is not a directory.");
-		}
+	    // Check if the audio file exists
+	    if (!audioFile.exists()) {
+	        System.err.println("Audio file not found: " + audioFilePath);
+	        return;
+	    }
 
-		if (!audioFile.exists()) {
-			System.err.println("Audio file not found: " + audioFilePath);
-			return;
-		}
-
-		try (InputStream is = new FileInputStream(audioFilePath)) {
-			Player player = new Player(is);
-			player.play();
-		} catch (FileNotFoundException e) {
-			System.err.println("Audio file not found: " + audioFilePath);
-			e.printStackTrace();
-		} catch (JavaLayerException | IOException e) {
-			System.err.println("Error playing the audio file: " + audioFilePath);
-			e.printStackTrace();
-		}
+	    try (InputStream is = new FileInputStream(audioFilePath)) {
+	        Player player = new Player(is);
+	        player.play();
+	    } catch (FileNotFoundException e) {
+	        System.err.println("Audio file not found: " + audioFilePath);
+	        e.printStackTrace();
+	    } catch (JavaLayerException | IOException e) {
+	        System.err.println("Error playing the audio file: " + audioFilePath);
+	        e.printStackTrace();
+	    }
 	}
+
+
 
 
 	// Method to fetch Weather and Time from API's
@@ -457,7 +449,6 @@ public class SubwayScreen extends JFrame {
 	                g2d.fillOval(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
 	            }
 	        }
-	        System.out.println("Number of dots (valid trains) on the map: " + validTrainCount); // Print the count
 	        g2d.dispose();
 	        Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
 	        ImageIcon imageIcon = new ImageIcon(scaledImage);
