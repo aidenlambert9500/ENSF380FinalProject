@@ -186,7 +186,7 @@ public class SubwayScreen extends JFrame {
 //		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
 //		trainTimer.start();
 		
-        stationChangeTimer = new Timer(3000, e -> {
+        stationChangeTimer = new Timer(5000, e -> {
             currentStationIndex = (currentStationIndex + 1) % stations.size();
     		SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
     		trains = SubwaySetup.getTrains();
@@ -222,7 +222,7 @@ public class SubwayScreen extends JFrame {
 
 	// Method to update current train station and next stations represented
 	private void updateTrainPanel(JPanel trainPanel) {
-	    // Check if train list is empty and fetch current station of first train
+	    // Check if train list is empty and fetch the current station of the first train
 	    if (trains != null && !trains.isEmpty()) {
 	        Train firstTrain = trains.get(0);
 	        Station currentStation = firstTrain.getCurrentStation();
@@ -245,19 +245,22 @@ public class SubwayScreen extends JFrame {
 	        end = stations.size();
 	    }
 
+	    // Create larger fonts for the circles and station names
+	    Font circleFont = new Font("Arial", Font.PLAIN, 20); // Adjust the font size as needed
+	    Font stationNameFont = new Font("Arial", Font.PLAIN, 13); // Adjust the font size as needed
+
 	    for (int i = start; i < end; i++) {
 	        JPanel stationPanel = new JPanel();
 	        stationPanel.setLayout(new BorderLayout());
 
 	        JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
-	        stationLabel.setFont(new Font("Arial", Font.PLAIN, 12)); // Smaller font for station names
+	        stationLabel.setFont(stationNameFont); // Set the larger font for station names
 	        JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
+	        circleLabel.setFont(circleFont); // Set the larger font for the circle
 
 	        if (i == currentStationIndex) {
 	            circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
 	            circleLabel.setForeground(Color.RED);
-	            // Play the audio announcement for the current station
-	            playStationAnnouncement(stations.get(i).getStationName());
 	        }
 
 	        // Add station label closer to the circle
@@ -266,50 +269,60 @@ public class SubwayScreen extends JFrame {
 	        mapPanel.add(stationPanel);
 	    }
 
+	    // Create a larger font for the "Next Stop" label
+	    Font nextStopFont = new Font("Arial", Font.PLAIN, 16); // Adjust the font size as needed
+
+	    // Add the "Next:" label
+	    String nextStationName = stations.get(currentStationIndex).getStationName();
+	    JLabel nextLabel = new JLabel("Next Stop: " + nextStationName, JLabel.CENTER);
+	    nextLabel.setFont(nextStopFont); // Set the larger font for the "Next Stop" label
 	    trainPanel.add(mapPanel, BorderLayout.CENTER);
-	    trainPanel.add(new JLabel("Next: " + stations.get((currentStationIndex + 1) % stations.size()).getStationName(),
-	            JLabel.CENTER), BorderLayout.SOUTH);
+	    trainPanel.add(nextLabel, BorderLayout.SOUTH);
 
 	    currentStationIndex = (currentStationIndex + 1) % stations.size();
+	    
+	    playStationAnnouncement(nextStationName);
 
 	    trainPanel.revalidate();
 	    trainPanel.repaint();
 	}
 
+
+	// Play the audio announcement for the given station name
 	private void playStationAnnouncement(String stationName) {
-	    // Trim stationName to avoid issues with leading/trailing spaces
-	    stationName = stationName.trim();
-	    String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
-	    System.out.println("Attempting to play audio file: " + audioFilePath);
-	    File audioFile = new File(audioFilePath);
+		// Trim stationName to avoid issues with leading/trailing spaces
+		stationName = stationName.trim();
+		String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
+		System.out.println("Attempting to play audio file: " + audioFilePath);
+		File audioFile = new File(audioFilePath);
 
-	    // Check if the directory and files exist
-	    File directory = new File("data/stationAudio/");
-	    String[] files = directory.list();
-	    if (files != null) {
-	        System.out.println("Files in directory:");
-	        for (String file : files) {
-	            System.out.println(file);
-	        }
-	    } else {
-	        System.out.println("Directory does not exist or is not a directory.");
-	    }
+		// Check if the directory and files exist
+		File directory = new File("data/stationAudio/");
+		String[] files = directory.list();
+		if (files != null) {
+			System.out.println("Files in directory:");
+			for (String file : files) {
+				System.out.println(file);
+			}
+		} else {
+			System.out.println("Directory does not exist or is not a directory.");
+		}
 
-	    if (!audioFile.exists()) {
-	        System.err.println("Audio file not found: " + audioFilePath);
-	        return;
-	    }
+		if (!audioFile.exists()) {
+			System.err.println("Audio file not found: " + audioFilePath);
+			return;
+		}
 
-	    try (InputStream is = new FileInputStream(audioFilePath)) {
-	        Player player = new Player(is);
-	        player.play();
-	    } catch (FileNotFoundException e) {
-	        System.err.println("Audio file not found: " + audioFilePath);
-	        e.printStackTrace();
-	    } catch (JavaLayerException | IOException e) {
-	        System.err.println("Error playing the audio file: " + audioFilePath);
-	        e.printStackTrace();
-	    }
+		try (InputStream is = new FileInputStream(audioFilePath)) {
+			Player player = new Player(is);
+			player.play();
+		} catch (FileNotFoundException e) {
+			System.err.println("Audio file not found: " + audioFilePath);
+			e.printStackTrace();
+		} catch (JavaLayerException | IOException e) {
+			System.err.println("Error playing the audio file: " + audioFilePath);
+			e.printStackTrace();
+		}
 	}
 
 
