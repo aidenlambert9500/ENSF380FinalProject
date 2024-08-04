@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.TimerTask;
+import java.util.Random;
+
+//import java.util.TimerTask;
+import javax.swing.Timer;
 import java.util.ArrayList;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
-
 
 public class SubwayScreen extends JFrame {
 	// Member Variables
@@ -44,6 +46,8 @@ public class SubwayScreen extends JFrame {
 	private int adCounter = 0, mapCounter = 0;
 	private final String MAP_PATH = "data/Trains.png";
 	private List<Train> trains;
+	private Train currentTrain;
+	private Station currentStation;
 
 	public SubwayScreen(String[] args) {
 		// Constructor (launches gui)
@@ -52,14 +56,20 @@ public class SubwayScreen extends JFrame {
 		SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
 		trains = SubwaySetup.getTrains();
 		stations = SubwaySetup.getStations(); // Initialize the stations list
+		if (trains != null && !trains.isEmpty()) {
+			Random rand = new Random();
+			currentTrain = trains.get(rand.nextInt(trains.size() + 1)); // select random train from the twelve for next
+																	// stations
+		}
+
 		// Connect to the database
-		db.connect();
+//		db.connect();
 
 		// Get ad paths from database
-		ads = db.getAds();
-		for (Advertisements ad : ads) {
-			adPaths.add(ad.getFilePath());
-		}
+//		ads = db.getAds();
+//		for (Advertisements ad : ads) {
+//			adPaths.add(ad.getFilePath());
+//		}
 
 		// Initialize the frame with a title and layout
 		setTitle("SubwayScreen");
@@ -185,15 +195,15 @@ public class SubwayScreen extends JFrame {
 		// Set up the timer to update the station every 20 seconds
 //		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
 //		trainTimer.start();
-		
-        stationChangeTimer = new Timer(5000, e -> {
-            currentStationIndex = (currentStationIndex + 1) % stations.size();
-    		SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
-    		trains = SubwaySetup.getTrains();
-    		stations = SubwaySetup.getStations(); // Initialize the stations list
-            updateTrainPanel(trainPanel);
-        });
-        stationChangeTimer.start();
+
+		stationChangeTimer = new Timer(5000, e -> {
+			currentStationIndex = (currentStationIndex + 1) % stations.size();
+			SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
+			trains = SubwaySetup.getTrains();
+			stations = SubwaySetup.getStations(); // Initialize the stations list
+			updateTrainPanel(trainPanel);
+		});
+		stationChangeTimer.start();
 
 //		// Timer to update news every 100 milliseconds
 //		newsTimer = new Timer(500, e -> updateNewsPanel());
@@ -202,15 +212,15 @@ public class SubwayScreen extends JFrame {
 		// Timer to update the ads every 10 seconds
 		// TODO make the adPanel show the big map every other refresh
 
-        adTimer = new Timer(10000, e -> {
-            if (mapCounter % 2 != 0) {
-                updateAdPanel(adCounter);
-            } else {
-                drawTrainPositionsOnMap();
-            }
-            mapCounter++;
-        });
-        adTimer.start();
+		adTimer = new Timer(10000, e -> {
+			if (mapCounter % 2 != 0) {
+				updateAdPanel(adCounter);
+			} else {
+				drawTrainPositionsOnMap();
+			}
+			mapCounter++;
+		});
+		adTimer.start();
 
 		// Make the Frame visible
 		setVisible(true);
@@ -222,101 +232,97 @@ public class SubwayScreen extends JFrame {
 
 	// Method to update current train station and next stations represented
 	private void updateTrainPanel(JPanel trainPanel) {
-	    // Check if train list is empty and fetch the current station of the first train
-	    if (trains != null && !trains.isEmpty()) {
-	        Train firstTrain = trains.get(0);
-	        Station currentStation = firstTrain.getCurrentStation();
+		// Check if train list is empty and fetch the current station of the first train
+		if (currentTrain != null) {
+			Station currentStation = currentTrain.getCurrentStation();
+			if (currentStation != null) {
+				currentStationIndex = stations.indexOf(currentStation);
+			}
+		}
 
-	        if (currentStation != null) {
-	            currentStationIndex = stations.indexOf(currentStation);
-	        }
-	    }
+		trainPanel.removeAll();
+		JPanel mapPanel = new JPanel();
+		mapPanel.setLayout(new GridLayout(1, 6));
 
-	    trainPanel.removeAll();
-	    JPanel mapPanel = new JPanel();
-	    mapPanel.setLayout(new GridLayout(1, 6));
+		int start = currentStationIndex - 1;
+		int end = currentStationIndex + 5;
+		if (start < 0) {
+			start = 0;
+		}
+		if (end > stations.size()) {
+			end = stations.size();
+		}
 
-	    int start = currentStationIndex - 1;
-	    int end = currentStationIndex + 5;
-	    if (start < 0) {
-	        start = 0;
-	    }
-	    if (end > stations.size()) {
-	        end = stations.size();
-	    }
+		// Create larger fonts for the circles and station names
+		Font circleFont = new Font("Arial", Font.PLAIN, 20); // Adjust the font size as needed
+		Font stationNameFont = new Font("Arial", Font.PLAIN, 13); // Adjust the font size as needed
 
-	    // Create larger fonts for the circles and station names
-	    Font circleFont = new Font("Arial", Font.PLAIN, 20); // Adjust the font size as needed
-	    Font stationNameFont = new Font("Arial", Font.PLAIN, 13); // Adjust the font size as needed
+		for (int i = start; i < end; i++) {
+			JPanel stationPanel = new JPanel();
+			stationPanel.setLayout(new BorderLayout());
 
-	    for (int i = start; i < end; i++) {
-	        JPanel stationPanel = new JPanel();
-	        stationPanel.setLayout(new BorderLayout());
+			JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
+			stationLabel.setFont(stationNameFont); // Set the larger font for station names
+			JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
+			circleLabel.setFont(circleFont); // Set the larger font for the circle
 
-	        JLabel stationLabel = new JLabel(stations.get(i).getStationName(), JLabel.CENTER);
-	        stationLabel.setFont(stationNameFont); // Set the larger font for station names
-	        JLabel circleLabel = new JLabel("\u25CB", JLabel.CENTER); // Unicode for a circle (○)
-	        circleLabel.setFont(circleFont); // Set the larger font for the circle
+			if (i == currentStationIndex) {
+				circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
+				circleLabel.setForeground(Color.RED);
+			}
 
-	        if (i == currentStationIndex) {
-	            circleLabel.setText("\u25CF"); // Unicode for a filled circle (●)
-	            circleLabel.setForeground(Color.RED);
-	        }
+			// Add station label closer to the circle
+			stationPanel.add(circleLabel, BorderLayout.CENTER);
+			stationPanel.add(stationLabel, BorderLayout.NORTH); // Move station name closer to the dot
+			mapPanel.add(stationPanel);
+		}
 
-	        // Add station label closer to the circle
-	        stationPanel.add(circleLabel, BorderLayout.CENTER);
-	        stationPanel.add(stationLabel, BorderLayout.NORTH); // Move station name closer to the dot
-	        mapPanel.add(stationPanel);
-	    }
+		// Create a larger font for the "Next Stop" label
+		Font nextStopFont = new Font("Arial", Font.PLAIN, 16); // Adjust the font size as needed
 
-	    // Create a larger font for the "Next Stop" label
-	    Font nextStopFont = new Font("Arial", Font.PLAIN, 16); // Adjust the font size as needed
+		// Add the "Next:" label
+		String nextStationName = currentStationIndex < stations.size() - 1
+				? stations.get(currentStationIndex + 1).getStationName()
+				: "End of Line";
+		JLabel nextLabel = new JLabel("Next Stop: " + nextStationName, JLabel.CENTER);
+		nextLabel.setFont(nextStopFont);
+		trainPanel.add(mapPanel, BorderLayout.CENTER);
+		trainPanel.add(nextLabel, BorderLayout.SOUTH);
 
-	    // Add the "Next:" label
-	    String nextStationName = stations.get(currentStationIndex).getStationName();
-	    JLabel nextLabel = new JLabel("Next Stop: " + nextStationName, JLabel.CENTER);
-	    nextLabel.setFont(nextStopFont); // Set the larger font for the "Next Stop" label
-	    trainPanel.add(mapPanel, BorderLayout.CENTER);
-	    trainPanel.add(nextLabel, BorderLayout.SOUTH);
+		currentStationIndex = (currentStationIndex + 1) % stations.size();
 
-	    currentStationIndex = (currentStationIndex + 1) % stations.size();
-	    
-	    playStationAnnouncement(nextStationName);
+		playStationAnnouncement(nextStationName);
 
-	    trainPanel.revalidate();
-	    trainPanel.repaint();
+		trainPanel.revalidate();
+		trainPanel.repaint();
 	}
-
 
 	// Play the audio announcement for the given station name
 	// Play the audio announcement for the given station name
 	private void playStationAnnouncement(String stationName) {
-	    // Trim stationName to avoid issues with leading/trailing spaces
-	    stationName = stationName.trim();
-	    String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
-	    System.out.println("Attempting to play audio file: " + audioFilePath);
-	    File audioFile = new File(audioFilePath);
+		// Trim stationName to avoid issues with leading/trailing spaces
+		stationName = stationName.trim();
+		String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
+		System.out.println("Attempting to play audio file: " + audioFilePath);
+		File audioFile = new File(audioFilePath);
 
-	    // Check if the audio file exists
-	    if (!audioFile.exists()) {
-	        System.err.println("Audio file not found: " + audioFilePath);
-	        return;
-	    }
+		// Check if the audio file exists
+		if (!audioFile.exists()) {
+			System.err.println("Audio file not found: " + audioFilePath);
+			return;
+		}
 
-	    try (InputStream is = new FileInputStream(audioFilePath)) {
-	        Player player = new Player(is);
-	        player.play();
-	    } catch (FileNotFoundException e) {
-	        System.err.println("Audio file not found: " + audioFilePath);
-	        e.printStackTrace();
-	    } catch (JavaLayerException | IOException e) {
-	        System.err.println("Error playing the audio file: " + audioFilePath);
-	        e.printStackTrace();
-	    }
+		try (InputStream is = new FileInputStream(audioFilePath)) {
+			Player player = new Player(is);
+			player.play();
+		} catch (FileNotFoundException e) {
+			System.err.println("Audio file not found: " + audioFilePath);
+			e.printStackTrace();
+		} catch (JavaLayerException | IOException e) {
+			System.err.println("Error playing the audio file: " + audioFilePath);
+			e.printStackTrace();
+		}
 	}
-
-
-
 
 	// Method to fetch Weather and Time from API's
 	private void updateWeatherPanel() {
@@ -426,42 +432,42 @@ public class SubwayScreen extends JFrame {
 			adPanel.repaint();
 		}
 	}
-	
-	private void drawTrainPositionsOnMap() {
-	    BufferedImage img = null;
-	    try {
-	        img = ImageIO.read(new File(MAP_PATH));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
 
-	    if (img != null) {
-	        Graphics2D g2d = img.createGraphics();
-	        g2d.setColor(Color.RED);
-	        int dotSize = 5; // Adjust this value to change the size of the dots
-	        int validTrainCount = 0; // Counter for valid trains
-	        for (Train train : trains) {
-	            Station station = train.getCurrentStation();
-	            if (station != null) {
-	                validTrainCount++; // Increment the counter for each valid train
-	                int x = (int) station.getXCoord();
-	                int y = (int) station.getYCoord();
-	                g2d.fillOval(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
-	            }
-	        }
-	        g2d.dispose();
-	        Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
-	        ImageIcon imageIcon = new ImageIcon(scaledImage);
-	        if (imageLabel != null) {
-	            imageLabel.setIcon(imageIcon); // Update the existing label with the new image
-	        } else {
-	            imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
-	            adPanel.add(imageLabel, BorderLayout.CENTER);
-	        }
-	        adPanel.setPreferredSize(new Dimension(500, 300));
-	        adPanel.revalidate();
-	        adPanel.repaint();
-	    }
+	private void drawTrainPositionsOnMap() {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(MAP_PATH));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (img != null) {
+			Graphics2D g2d = img.createGraphics();
+			g2d.setColor(Color.RED);
+			int dotSize = 5; // Adjust this value to change the size of the dots
+			int validTrainCount = 0; // Counter for valid trains
+			for (Train train : trains) {
+				Station station = train.getCurrentStation();
+				if (station != null) {
+					validTrainCount++; // Increment the counter for each valid train
+					int x = (int) station.getXCoord();
+					int y = (int) station.getYCoord();
+					g2d.fillOval(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
+				}
+			}
+			g2d.dispose();
+			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+			ImageIcon imageIcon = new ImageIcon(scaledImage);
+			if (imageLabel != null) {
+				imageLabel.setIcon(imageIcon); // Update the existing label with the new image
+			} else {
+				imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
+				adPanel.add(imageLabel, BorderLayout.CENTER);
+			}
+			adPanel.setPreferredSize(new Dimension(500, 300));
+			adPanel.revalidate();
+			adPanel.repaint();
+		}
 	}
 
 	// Method to fix the size of JLabels
@@ -476,30 +482,29 @@ public class SubwayScreen extends JFrame {
 		startSimulator();
 		SwingUtilities.invokeLater(() -> new SubwayScreen(args));
 	}
-	
+
 	private static void startSimulator() {
-        // Runs the simulator
-        Process process = null;
-        try {
-            String[] command = { "java", "-jar", "./exe/SubwaySimulator.jar", "--in", "./data/subway.csv", "--out",
-                    "./out" };
-            process = new ProcessBuilder(command).start();
-        } catch (IOException e) {
-            System.err.println(e);
-            e.printStackTrace();
-        }
-        final Process finalProcess = process;
+		// Runs the simulator
+		Process process = null;
+		try {
+			String[] command = { "java", "-jar", "./exe/SubwaySimulator.jar", "--in", "./data/subway.csv", "--out",
+					"./out" };
+			process = new ProcessBuilder(command).start();
+		} catch (IOException e) {
+			System.err.println(e);
+			e.printStackTrace();
+		}
+		final Process finalProcess = process;
 
-        // It will destroy the simulator process at the end
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (finalProcess != null) {
-                finalProcess.destroy();
-            }
-        }));
+		// It will destroy the simulator process at the end
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			if (finalProcess != null) {
+				finalProcess.destroy();
+			}
+		}));
 
-
-        // Prints simulator in the console.
-        // Just for test. Its while loop friezes the application.
+		// Prints simulator in the console.
+		// Just for test. Its while loop friezes the application.
 //        InputStream inputStream = process.getInputStream();
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 //        String line;
@@ -510,5 +515,5 @@ public class SubwayScreen extends JFrame {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-    }
+	}
 }
