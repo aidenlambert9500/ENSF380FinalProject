@@ -37,7 +37,7 @@ public class SubwayScreen extends JFrame {
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer;
+	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, contentSwitchTimer, mapTimer;
 	private int newsIndex = 0;
 	private ArrayList<String> newsList;
 	private Database db = new Database();
@@ -48,6 +48,7 @@ public class SubwayScreen extends JFrame {
 	private List<Train> trains;
 	private Train currentTrain;
 	private Station currentStation;
+	private boolean showingAd = true;
 
 	public SubwayScreen(String[] args) {
 		// Constructor (launches gui)
@@ -63,14 +64,14 @@ public class SubwayScreen extends JFrame {
 		}
 
 		// Connect to the database
-//		db.connect();
+		db.connect();
 
 		// Get ad paths from database
-//		ads = db.getAds();
-//		for (Advertisements ad : ads) {
-//			adPaths.add(ad.getFilePath());
-//		}
-
+		ads = db.getAds();
+		for (Advertisements ad : ads) {
+		adPaths.add(ad.getFilePath());
+		}
+		
 		// Initialize the frame with a title and layout
 		setTitle("SubwayScreen");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -189,11 +190,11 @@ public class SubwayScreen extends JFrame {
 		add(trainPanel, trainGBC);
 
 //		// Update the weather information
-//		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
+		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
 //		weatherTimer.start();
 
 		// Set up the timer to update the station every 20 seconds
-//		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
 //		trainTimer.start();
 
 		stationChangeTimer = new Timer(5000, e -> {
@@ -203,29 +204,41 @@ public class SubwayScreen extends JFrame {
 			stations = SubwaySetup.getStations(); // Initialize the stations list
 			updateTrainPanel(trainPanel);
 		});
-		stationChangeTimer.start();
+		//stationChangeTimer.start();
 
 //		// Timer to update news every 100 milliseconds
-//		newsTimer = new Timer(500, e -> updateNewsPanel());
+		newsTimer = new Timer(500, e -> updateNewsPanel());
 //		newsTimer.start();
 
 		// Timer to update the ads every 10 seconds
 		// TODO make the adPanel show the big map every other refresh
-
-		adTimer = new Timer(10000, e -> {
-			if (mapCounter % 2 != 0) {
-				updateAdPanel(adCounter);
-			} else {
-				drawTrainPositionsOnMap();
-			}
-			mapCounter++;
-		});
+		updateAdPanel(adCounter);
+		adTimer = new Timer(10000, e -> switchContent(adCounter));
 		adTimer.start();
 
+	
 		// Make the Frame visible
 		setVisible(true);
 	}
 
+	
+	/**
+	 * This function is used to switch the timer delays for the ads and the map. It calls updateAdPanel when the map is displayed 
+	 * and calls drawTrainPositionsOnMap when an ad is displayed.
+	 * @param adCount used to iterate over the ArrayList of adPaths
+	 */
+	private void switchContent(int adCount) {
+		if(showingAd) {
+			drawTrainPositionsOnMap();
+			adTimer.setDelay(10000);
+		} else {
+			updateAdPanel(adCounter);
+			adTimer.setDelay(5000);
+		}
+		showingAd = !showingAd;
+	}
+	
+	
 	private void addTrainInformation(JPanel trainPanel) {
 		updateTrainPanel(trainPanel);
 	}
@@ -377,7 +390,7 @@ public class SubwayScreen extends JFrame {
 		int index = adCounter % adPaths.size();
 
 		try {
-			img = ImageIO.read(new File(adPaths.get(adCounter)));
+			img = ImageIO.read(new File(adPaths.get(index)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -524,4 +537,5 @@ public class SubwayScreen extends JFrame {
 //            e.printStackTrace();
 //        }
 	}
+	
 }
