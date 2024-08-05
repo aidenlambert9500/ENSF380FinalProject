@@ -58,8 +58,8 @@ public class SubwayScreen extends JFrame {
 		stations = SubwaySetup.getStations(); // Initialize the stations list
 		if (trains != null && !trains.isEmpty()) {
 			Random rand = new Random();
-			currentTrain = trains.get(rand.nextInt(trains.size() + 1)); // select random train from the twelve for next
-																	// stations
+			currentTrain = trains.get(rand.nextInt(trains.size())); // select random train from the twelve for next
+			// stations. only required to run once. index 0 to 11; 12 trains
 		}
 
 		// Connect to the database
@@ -431,6 +431,11 @@ public class SubwayScreen extends JFrame {
 	}
 
 	private void drawTrainPositionsOnMap() {
+		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
+		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
+		double scaleX = (double) newWidth / origWidth;
+		double scaleY = (double) newHeight / origHeight;
+
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File(MAP_PATH));
@@ -439,44 +444,35 @@ public class SubwayScreen extends JFrame {
 		}
 
 		if (img != null) {
-			BufferedImage overlay = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB); 
-			// create overlay img same size as map (Trains.png)
-			Graphics2D g2d = img.createGraphics();
-			g2d.drawImage(img, 0, 0, null);
-			
-			// Calculate the scaling factors based on the dimensions of the map image
-	        double maxX = trains.stream()
-	                            .mapToDouble(train -> train.getCurrentStation().getXCoord())
-	                            .max()
-	                            .orElse(0);
-	        double maxY = trains.stream()
-	                            .mapToDouble(train -> train.getCurrentStation().getYCoord())
-	                            .max()
-	                            .orElse(0);
-	        double scaleX = (double) img.getWidth() / maxX;
-	        double scaleY = (double) img.getHeight() / maxY;
-			
+			Graphics2D g2d = img.createGraphics(); // Create Graphics2D obj from buffered img
 			g2d.setColor(Color.RED);
 			int dotSize = 5; // Adjust this value to change the size of the dots
 			for (Train train : trains) {
-				Station station = train.getCurrentStation();
-				if (station != null) {
-					int x = (int) station.getXCoord();
-					int y = (int) station.getYCoord();
-					g2d.fillOval(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
+				if (train.getCurrentStation() != null) {
+					Station station = train.getCurrentStation();
+
+					// Calculate the scaled coordinates
+					int scaledX = (int) (station.getXCoord() * scaleX);
+					int scaledY = (int) (station.getYCoord() * scaleY);
+
+					// Draw the dot on the map
+					g2d.fillOval(scaledX - dotSize / 2, scaledY - dotSize / 2, dotSize, dotSize);
 				}
 			}
 			g2d.dispose();
 			
-			// Update the imageLabel with the new overlay
-			ImageIcon imageIcon = new ImageIcon(overlay);
+			// Update img label with new img
+			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+			ImageIcon imageIcon = new ImageIcon(scaledImage);
 			if (imageLabel != null) {
 				imageLabel.setIcon(imageIcon); // Update the existing label with the new image
 			} else {
 				imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
 				adPanel.add(imageLabel, BorderLayout.CENTER);
 			}
-			adPanel.setPreferredSize(new Dimension(500, 300));
+			
+			// Refresh the adPanel
+//			adPanel.setPreferredSize(new Dimension(500, 300));
 			adPanel.revalidate();
 			adPanel.repaint();
 		}
