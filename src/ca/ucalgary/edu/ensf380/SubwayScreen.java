@@ -289,15 +289,12 @@ public class SubwayScreen extends JFrame {
 		trainPanel.add(mapPanel, BorderLayout.CENTER);
 		trainPanel.add(nextLabel, BorderLayout.SOUTH);
 
-		currentStationIndex = (currentStationIndex + 1) % stations.size();
-
 		playStationAnnouncement(nextStationName);
 
 		trainPanel.revalidate();
 		trainPanel.repaint();
 	}
 
-	// Play the audio announcement for the given station name
 	// Play the audio announcement for the given station name
 	private void playStationAnnouncement(String stationName) {
 		// Trim stationName to avoid issues with leading/trailing spaces
@@ -442,22 +439,37 @@ public class SubwayScreen extends JFrame {
 		}
 
 		if (img != null) {
+			BufferedImage overlay = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB); 
+			// create overlay img same size as map (Trains.png)
 			Graphics2D g2d = img.createGraphics();
+			g2d.drawImage(img, 0, 0, null);
+			
+			// Calculate the scaling factors based on the dimensions of the map image
+	        double maxX = trains.stream()
+	                            .mapToDouble(train -> train.getCurrentStation().getXCoord())
+	                            .max()
+	                            .orElse(0);
+	        double maxY = trains.stream()
+	                            .mapToDouble(train -> train.getCurrentStation().getYCoord())
+	                            .max()
+	                            .orElse(0);
+	        double scaleX = (double) img.getWidth() / maxX;
+	        double scaleY = (double) img.getHeight() / maxY;
+			
 			g2d.setColor(Color.RED);
 			int dotSize = 5; // Adjust this value to change the size of the dots
-			int validTrainCount = 0; // Counter for valid trains
 			for (Train train : trains) {
 				Station station = train.getCurrentStation();
 				if (station != null) {
-					validTrainCount++; // Increment the counter for each valid train
 					int x = (int) station.getXCoord();
 					int y = (int) station.getYCoord();
 					g2d.fillOval(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
 				}
 			}
 			g2d.dispose();
-			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
-			ImageIcon imageIcon = new ImageIcon(scaledImage);
+			
+			// Update the imageLabel with the new overlay
+			ImageIcon imageIcon = new ImageIcon(overlay);
 			if (imageLabel != null) {
 				imageLabel.setIcon(imageIcon); // Update the existing label with the new image
 			} else {

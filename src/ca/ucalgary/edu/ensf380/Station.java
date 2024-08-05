@@ -14,19 +14,19 @@ class Station {
     }
 
     public String getStationCode() {
-        return stationCode;
+        return this.stationCode;
     }
 
 
     public String getStationName() {
-        return stationName;
+        return this.stationName;
     }
     
     public double getXCoord() {
-        return x;
+        return this.x;
     }
 
     public double getYCoord() {
-        return y;
+        return this.y;
     }
 }
