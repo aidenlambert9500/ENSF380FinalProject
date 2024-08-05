@@ -189,11 +189,11 @@ public class SubwayScreen extends JFrame {
 
 //		// Update the weather information
 		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
-//		weatherTimer.start();
+		weatherTimer.start();
 
 		// Set up the timer to update the station every 20 seconds
 		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
-//		trainTimer.start();
+		trainTimer.start();
 
 		stationChangeTimer = new Timer(5000, e -> {
 			currentStationIndex = (currentStationIndex + 1) % stations.size();
@@ -202,7 +202,7 @@ public class SubwayScreen extends JFrame {
 			stations = SubwaySetup.getStations(); // Initialize the stations list
 			updateTrainPanel(trainPanel);
 		});
-		//stationChangeTimer.start();
+		stationChangeTimer.start();
 
 //		// Timer to update news every 100 milliseconds
 		newsTimer = new Timer(500, e -> updateNewsPanel());
@@ -213,7 +213,9 @@ public class SubwayScreen extends JFrame {
 		updateAdPanel(adCounter);
 		adTimer = new Timer(10000, e -> switchContent(adCounter));
 		adTimer.start();
-
+		
+		mapTimer = new Timer(5000, e -> switchContent(adCounter));
+		
 	
 		// Make the Frame visible
 		setVisible(true);
@@ -228,10 +230,12 @@ public class SubwayScreen extends JFrame {
 	private void switchContent(int adCount) {
 		if(showingAd) {
 			drawTrainPositionsOnMap();
-			adTimer.setDelay(10000);
+			mapTimer.start();
+			adTimer.stop();
 		} else {
 			updateAdPanel(adCounter);
-			adTimer.setDelay(5000);
+			mapTimer.stop();
+			adTimer.start();
 		}
 		showingAd = !showingAd;
 	}
@@ -414,33 +418,7 @@ public class SubwayScreen extends JFrame {
 		adCounter++;
 	}
 
-	private void showMap() {
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(MAP_PATH));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if (img != null) {
-			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
-			ImageIcon imageIcon = new ImageIcon(scaledImage);
-			JLabel newImageLabel = new JLabel(imageIcon);
-
-			if (imageLabel != null) {
-				imageLabel.setIcon(imageIcon); // Update the existing label with the new image
-			} else {
-				imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
-				adPanel.add(imageLabel, BorderLayout.CENTER);
-			}
-
-			// refresh the adPanel
-			adPanel.setPreferredSize(new Dimension(500, 300));
-			adPanel.revalidate();
-			adPanel.repaint();
-		}
-	}
-
+	
 	private void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
 		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
