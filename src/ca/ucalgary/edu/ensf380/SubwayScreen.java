@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Random;
-
 //import java.util.TimerTask;
 import javax.swing.Timer;
 import java.util.ArrayList;
@@ -57,8 +55,8 @@ public class SubwayScreen extends JFrame {
 		trains = SubwaySetup.getTrains();
 		stations = SubwaySetup.getStations(); // Initialize the stations list
 		if (trains != null && !trains.isEmpty()) {
-			Random rand = new Random();
-			currentTrain = trains.get(rand.nextInt(trains.size())); // select random train from the twelve for next
+			int currentTrainNumber = Integer.parseInt(args[1]); // train# - 1 = index
+			currentTrain = trains.get(currentTrainNumber); // select random train from the twelve for next
 			// stations. only required to run once. index 0 to 11; 12 trains
 		}
 
@@ -98,7 +96,7 @@ public class SubwayScreen extends JFrame {
 		weatherLabel = new JLabel("Temperature:");
 		setFixedSize(weatherLabel, 120, 30);
 		weatherLabel.setVerticalAlignment(JLabel.BOTTOM);
-		timeLabel = new JLabel("Time: ");
+		timeLabel = new JLabel("TIME");
 		setFixedSize(timeLabel, 120, 30);
 		cityLabel = new JLabel("CITY");
 		setFixedSize(cityLabel, 120, 30);
@@ -454,13 +452,20 @@ public class SubwayScreen extends JFrame {
 					// Calculate the scaled coordinates
 					int scaledX = (int) (station.getXCoord() * scaleX);
 					int scaledY = (int) (station.getYCoord() * scaleY);
+					
+					// Current train is a green dot
+					if (station.equals(currentTrain.getCurrentStation())) {
+	                    g2d.setColor(Color.GREEN); // Current station color
+	                } else {
+	                    g2d.setColor(Color.RED); // Other stations color
+	                }
 
 					// Draw the dot on the map
 					g2d.fillOval(scaledX - dotSize / 2, scaledY - dotSize / 2, dotSize, dotSize);
 				}
 			}
 			g2d.dispose();
-			
+
 			// Update img label with new img
 			Image scaledImage = img.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
 			ImageIcon imageIcon = new ImageIcon(scaledImage);
@@ -470,7 +475,7 @@ public class SubwayScreen extends JFrame {
 				imageLabel = new JLabel(imageIcon); // Create the label if it doesn't exist
 				adPanel.add(imageLabel, BorderLayout.CENTER);
 			}
-			
+
 			// Refresh the adPanel
 //			adPanel.setPreferredSize(new Dimension(500, 300));
 			adPanel.revalidate();
