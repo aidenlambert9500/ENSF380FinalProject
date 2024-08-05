@@ -30,23 +30,25 @@ import javazoom.jl.player.Player;
 
 public class SubwayScreen extends JFrame {
 	// Member Variables
-	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
-	private JPanel adPanel;
-	private String[] args;
-	private List<Station> stations;
-	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, contentSwitchTimer, mapTimer;
-	private int newsIndex = 0;
-	private ArrayList<String> newsList;
-	private Database db = new Database();
-	private ArrayList<Advertisements> ads;
-	private ArrayList<String> adPaths = new ArrayList<String>();
-	private int adCounter = 0, mapCounter = 0;
-	private final String MAP_PATH = "data/Trains.png";
-	private List<Train> trains;
-	private Train currentTrain;
-	private Station currentStation;
-	private boolean showingAd = true;
+	public JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
+	public JPanel adPanel;
+	public String[] args;
+	public Station currentStation;
+	public boolean showingAd = true;
+	
+	public List<Station> stations;
+	public int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
+	public Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, contentSwitchTimer, mapTimer;
+	public int newsIndex = 0;
+	public ArrayList<String> newsList;
+	public Database db = new Database();
+	public ArrayList<Advertisements> ads;
+	public ArrayList<String> adPaths = new ArrayList<String>();
+	public int adCounter = 0, mapCounter = 0;
+	public final String MAP_PATH = "data/Trains.png";
+	public List<Train> trains;
+	public Train currentTrain;
+	
 
 	public SubwayScreen(String[] args) {
 		// Constructor (launches gui)
@@ -311,7 +313,7 @@ public class SubwayScreen extends JFrame {
 	}
 
 	// Play the audio announcement for the given station name
-	private void playStationAnnouncement(String stationName) {
+	public void playStationAnnouncement(String stationName) {
 		// Trim stationName to avoid issues with leading/trailing spaces
 		stationName = stationName.trim();
 		String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
@@ -387,7 +389,7 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
-	private void updateAdPanel(int adCount) {
+	public void updateAdPanel(int adCount) {
 		BufferedImage img = null;
 		int index = adCounter % adPaths.size();
 
@@ -419,7 +421,7 @@ public class SubwayScreen extends JFrame {
 	}
 
 	
-	private void drawTrainPositionsOnMap() {
+	public void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
 		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
 		double scaleX = (double) newWidth / origWidth;

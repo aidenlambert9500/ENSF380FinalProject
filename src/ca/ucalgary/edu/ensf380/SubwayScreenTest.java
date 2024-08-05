@@ -66,11 +66,14 @@ public class SubwayScreenTest {
 
     @Test
     public void testPlayStationAnnouncement() {
-        screen.playStationAnnouncement("Maplewood Station");
-        // This is difficult to assert directly without a mock framework,
-        // but we can check if the file path exists or was attempted to be played.
-        String audioFilePath = "data/stationAudio/TestStation.mp3";
-        File audioFile = new File(audioFilePath);
+        SubwayScreen screen = new SubwayScreen(new String[]{"Calgary", "1"});
+        String stationName = "Maplewood Station"; // Make sure this file exists in data/stationAudio/ExampleStation.mp3
+
+        File audioFile = new File("data/stationAudio/" + stationName + ".mp3");
         assertTrue("Audio file should exist or have been attempted to play", audioFile.exists());
+        
+        // Assuming that the method is invoked during construction or some other method
+        screen.playStationAnnouncement(stationName);
     }
 }
+
