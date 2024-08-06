@@ -26,4 +26,6 @@ __Run the Program__
 5. Click 'Classpath' and add all of the libraries present in the folder 'libraries'
 6. Click the run button
 
+__Note:__ If you wish to run the program with command line arguments simply right-click the code > Run As > Run Configurations > Arguments. Then input the city of the weather you wish to display, the train number from 1-12, and the news keyword. The arguments must be separated by a space. The news keyword is not mandatory. If no news keyword is passed the API will search for top news articles around the world.
+
    
