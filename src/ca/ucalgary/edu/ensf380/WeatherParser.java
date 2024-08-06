@@ -10,8 +10,16 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A class that retrieves weather information of a given city.
+ */
 public class WeatherParser {
 
+    /**
+     * A method to retrieve the weather information of a city 
+     * @param city the name of a city to get weather for in string format
+     * @return a string of the current weather in the city passed
+     */
     public String getWeatherInfo(String city) {
         String url = "https://wttr.in/" + city;
 
@@ -38,6 +46,11 @@ public class WeatherParser {
         }
     }
 
+    /**
+     * A method to retrieve the time at a current city
+     * @param city the name of a city to get the time for in string format
+     * @return a string of the current time in the given city
+     */
     public String getTime(String city) {
         String url = "http://worldtimeapi.org/api/timezone/America/" + city;
 
@@ -60,27 +73,30 @@ public class WeatherParser {
         }
     }
 
-    // New methods to fetch Document, which can be overridden in tests
+    /**
+     * Fetches a document from the specified URL.
+     * This method uses Jsoup to make a HTTP GET request to the provided URL
+     * and parses the response as an HTML document.
+     *
+     * @param url the URL to fetch the document from
+     * @return the parsed HTML document
+     * @throws IOException if an I/O error occurs while connecting to the URL or reading the response
+     */
     protected Document fetchDocumentFromUrl(String url) throws IOException {
         return Jsoup.connect(url).get();
     }
 
+    /**
+     * Fetches a JSON document from the specified URL.
+     * This method uses Jsoup to make a HTTP GET request to the provided URL
+     * and parses the response as a JSON document. The content type is ignored
+     * to allow Jsoup to process the response as plain text and convert it to a document.
+     *
+     * @param url the URL to fetch the JSON document from
+     * @return the parsed JSON document
+     * @throws IOException if an I/O error occurs while connecting to the URL or reading the response
+     */
     protected Document fetchJsonFromUrl(String url) throws IOException {
         return Jsoup.connect(url).ignoreContentType(true).get();
-    }
-
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Please provide a city as a command line argument.");
-            return;
-        }
-
-        String city = args[0];
-        WeatherParser weatherParser = new WeatherParser();
-        String temperature = weatherParser.getWeatherInfo(city);
-        String time = weatherParser.getTime(city);
-        System.out.println("City: " + city);
-        System.out.println(temperature);
-        System.out.println(time);
     }
 }
