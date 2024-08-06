@@ -29,7 +29,8 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 /**
- * A class to visually represent all of the data using a GUI
+ * A class that provides a GUI for visualizing subway system data, including
+ * train schedules, weather updates, news, and advertisements.
  */
 public class SubwayScreen extends JFrame {
 	// Member Variables
@@ -54,6 +55,7 @@ public class SubwayScreen extends JFrame {
 
 	/**
 	 * A constructor for the GUI
+	 * 
 	 * @param args the arguments passed from the command line
 	 */
 	public SubwayScreen(String[] args) {
@@ -75,9 +77,9 @@ public class SubwayScreen extends JFrame {
 		// Get ad paths from database
 		ads = db.getAds();
 		for (Advertisements ad : ads) {
-		adPaths.add(ad.getFilePath());
+			adPaths.add(ad.getFilePath());
 		}
-		
+
 		// Initialize the frame with a title and layout
 		setTitle("SubwayScreen");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -221,79 +223,85 @@ public class SubwayScreen extends JFrame {
 		updateAdPanel(adCounter);
 		adTimer = new Timer(10000, e -> switchContent(adCounter));
 		adTimer.start();
-		
+
 		mapTimer = new Timer(5000, e -> switchContent(adCounter));
-		
-	
+
 		// Make the Frame visible
 		setVisible(true);
 	}
-	
+
 	/**
 	 * Retrieves the JLabel used to display weather information.
+	 * 
 	 * @return the JLabel displaying weather information
 	 */
 	public JLabel getWeatherLabel() {
-	    return this.weatherLabel;
+		return this.weatherLabel;
 	}
 
 	/**
 	 * Retrieves the JLabel used to display the current time.
+	 * 
 	 * @return the JLabel displaying the current time
 	 */
 	public JLabel getTimeLabel() {
-	    return this.timeLabel;
+		return this.timeLabel;
 	}
 
 	/**
 	 * Retrieves the JLabel used to display the city name.
+	 * 
 	 * @return the JLabel displaying the city name
 	 */
 	public JLabel getCityLabel() {
-	    return this.cityLabel;
+		return this.cityLabel;
 	}
 
 	/**
 	 * Retrieves the JLabel used to display news headlines.
+	 * 
 	 * @return the JLabel displaying news headlines
 	 */
 	public JLabel getNewsLabel() {
-	    return this.newsLabel;
+		return this.newsLabel;
 	}
 
 	/**
 	 * Retrieves the JPanel that contains advertisement components.
+	 * 
 	 * @return the JPanel used for advertisements
 	 */
 	public JPanel getAdPanel() {
-	    return this.adPanel;
+		return this.adPanel;
 	}
 
 	/**
 	 * Retrieves the list of file paths for advertisement images.
+	 * 
 	 * @return an ArrayList containing file paths to advertisement images
 	 */
 	public ArrayList<String> getAdPaths() {
-	    return this.adPaths;
+		return this.adPaths;
 	}
 
 	/**
 	 * Retrieves the JLabel used to display images (e.g., advertisements).
+	 * 
 	 * @return the JLabel used for displaying images
 	 */
 	public JLabel getImageLabel() {
-	    return this.imageLabel;
+		return this.imageLabel;
 	}
 
-	
-	
 	/**
-	 * This function is used to switch the timer delays for the ads and the map. It calls updateAdPanel when the map is displayed 
-	 * and calls drawTrainPositionsOnMap when an ad is displayed.
+	 * This function is used to switch the timer delays for the ads and the map. It
+	 * calls updateAdPanel when the map is displayed and calls
+	 * drawTrainPositionsOnMap when an ad is displayed.
+	 * 
 	 * @param adCount used to iterate over the ArrayList of adPaths
 	 */
 	private void switchContent(int adCount) {
-		if(showingAd) {
+		if (showingAd) {
 			drawTrainPositionsOnMap();
 			mapTimer.start();
 			adTimer.stop();
@@ -304,10 +312,10 @@ public class SubwayScreen extends JFrame {
 		}
 		showingAd = !showingAd;
 	}
-	
 
 	/**
 	 * A method to update current train station and next stations represented
+	 * 
 	 * @param trainPanel the panel which displays the train line map
 	 */
 	private void updateTrainPanel(JPanel trainPanel) {
@@ -375,7 +383,9 @@ public class SubwayScreen extends JFrame {
 	}
 
 	/**
-	 * A method to play the audio for the given station name when a train is arriving there
+	 * A method to play the audio for the given station name when a train is
+	 * arriving there
+	 * 
 	 * @param stationName
 	 */
 	public void playStationAnnouncement(String stationName) {
@@ -419,9 +429,10 @@ public class SubwayScreen extends JFrame {
 			cityLabel.setText(city);
 		}
 	}
-	
+
 	/**
-	 * A method to fetch news head titles based on keyword or world news from News API
+	 * A method to fetch news head titles based on keyword or world news from News
+	 * API
 	 */
 	private void updateNewsPanel() {
 		NewsAPI newsAPI = new NewsAPI();
@@ -460,6 +471,7 @@ public class SubwayScreen extends JFrame {
 
 	/**
 	 * A method to update the adPanel with the next advertisement in the database
+	 * 
 	 * @param adCount the index of the list of adPaths which we want to access
 	 */
 	public void updateAdPanel(int adCount) {
@@ -493,9 +505,8 @@ public class SubwayScreen extends JFrame {
 		adCounter++;
 	}
 
-	
 	/**
-	 * A method to display the map and the trains current positions on each line 
+	 * A method to display the map and the trains current positions on each line
 	 */
 	public void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
@@ -521,13 +532,13 @@ public class SubwayScreen extends JFrame {
 					// Calculate the scaled coordinates
 					int scaledX = (int) (station.getXCoord() * scaleX);
 					int scaledY = (int) (station.getYCoord() * scaleY);
-					
+
 					// Current train is a green dot
 					if (station.equals(currentTrain.getCurrentStation())) {
-	                    g2d.setColor(Color.GREEN); // Current station color
-	                } else {
-	                    g2d.setColor(Color.RED); // Other stations color
-	                }
+						g2d.setColor(Color.GREEN); // Current station color
+					} else {
+						g2d.setColor(Color.RED); // Other stations color
+					}
 
 					// Draw the dot on the map
 					g2d.fillOval(scaledX - dotSize / 2, scaledY - dotSize / 2, dotSize, dotSize);
@@ -555,8 +566,9 @@ public class SubwayScreen extends JFrame {
 	// Method to fix the size of JLabels
 	/**
 	 * A method to set the size of the JLabels
-	 * @param label the label whose size is being changed
-	 * @param width the width of the desired size of the panel in integer format
+	 * 
+	 * @param label  the label whose size is being changed
+	 * @param width  the width of the desired size of the panel in integer format
 	 * @param height the height of the desired size of the panel in integer format
 	 */
 	private void setFixedSize(JLabel label, int width, int height) {
@@ -592,5 +604,5 @@ public class SubwayScreen extends JFrame {
 		}));
 
 	}
-	
+
 }
