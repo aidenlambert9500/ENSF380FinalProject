@@ -35,7 +35,7 @@ public class SubwayScreen extends JFrame {
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, contentSwitchTimer, mapTimer;
+	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, mapTimer;
 	private int newsIndex = 0;
 	private ArrayList<String> newsList;
 	private Database db = new Database();

@@ -8,6 +8,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 
+/**
+ * A class to connect to a MySQL database to retrieve filepaths to different media types
+ */
 public class Database {
 	private Connection dbConnection;
 	private ResultSet results;
@@ -16,10 +19,10 @@ public class Database {
 	private static final String PASSWORD = "30195900";
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	
-	public Database() {
-		
-	}
 	
+	/**
+	 * A method to connect to the database using a predefined url, password, and username
+	 */
 	public void connect() {
 		// try to connect to the database, catches any errors
 		try {
@@ -29,7 +32,11 @@ public class Database {
 		}
 	}
 	
-	// method returns an ArrayList<String> of all the file paths of the ads in the database
+	
+	/**
+	 * A method to get the filePaths of all the media present in the database
+	 * @return an ArrayList of strings containing all the filepaths 
+	 */
 	public ArrayList<String> getFilePaths() {
 		String query = "Select * from advertisements";
 		// try to execute the query and throws any potential errors
@@ -46,6 +53,10 @@ public class Database {
 		return adPaths;
 	}
 	
+	/**
+	 * A method that calls getFilePaths and creates an Advertisement object for each string that it returns
+	 * @return an ArrayList of Advertisements where each Advertisement contains a filepath string
+	 */
 	public ArrayList<Advertisements> getAds(){
 		adPaths = getFilePaths();
 		ArrayList<Advertisements> ads = new ArrayList<Advertisements>();

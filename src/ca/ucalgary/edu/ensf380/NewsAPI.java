@@ -13,36 +13,59 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * A class to fetch news articles from the internet via an API
+ */
 public class NewsAPI {
 	// Member variables
 	private static String apiKey = "a4ee91a541d94cb9950c4f2f22cd2a8a";
 	private static String ENDPOINT = "https://newsapi.org/v2/";
 	private ArrayList<String> news;
 
-	// default constructor
+	
+	/**
+	 * Default constructor that initializes a new ArrayList for the news articles
+	 */
 	public NewsAPI() {
 		this.news = new ArrayList<>();
 	}
 
+	/**
+	 * A method to get the news articles 
+	 * @return an ArrayList of strings of news article titles
+	 */
 	public ArrayList<String> getNews() {
 		return this.news;
 	}
 
-	// function takes a string parameter and adds 5 news titles containing that
-	// string to a NewsAPI object
+	
+	/**
+	 * A method that formats a url with a keyword and calls fetchNewsByUrl with that url.
+	 * @param keyword a string that the user wishes to search the internet for news articles relating to that word
+	 * @throws IOException throws an exception if there is any error connecting to the api
+	 */
 	public void fetchNewsByKeyword(String keyword) throws IOException {
 		String apiURL = ENDPOINT + "everything?q=" + keyword + "&apiKey=" + apiKey;
 		fetchNewsByUrl(apiURL);
 	}
 
-	// function takes no parameters and adds 5 news titles relating to World News to
-	// a NewsAPI object
+	
+	/**
+	 * A method that formats a url to find general world news by calling fetchNewsByUrl with a generic search term
+	 * @throws IOException throws an exception if there is any error connecting to the api
+	 */
 	public void fetchNews() throws IOException {
 		String apiURL = ENDPOINT + "top-headlines?country=us" + "&apiKey=" + apiKey;
 		fetchNewsByUrl(apiURL);
 	}
 
-	// General news fetcher method
+	
+	/**
+	 * A method that connects to the api and uses a url to search for news articles. It then parses over the returned JSON to create an ArrayList of strings.
+	 * @param apiURL the url to connect to the api
+	 * @return an ArrayList of strings of news article titles
+	 * @throws IOException throws an exception if there is any error connecting to the api
+	 */
 	public ArrayList<String> fetchNewsByUrl(String apiURL) throws IOException {
 		URL url = new URL(apiURL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -75,26 +98,5 @@ public class NewsAPI {
 		connection.disconnect();
 
 		return news;
-	}
-
-	public static void main(String args[]) throws IOException {
-		// test to print 5 news articles using keyword lebron
-		String query = "lebron"; // Example query
-		NewsAPI news = new NewsAPI();
-		news.fetchNewsByKeyword(query);
-		int i = 0;
-		for (String title : news.getNews()) {
-			i++;
-			// System.out.println(i + ". " + title);
-		}
-
-		// test to print 5 breaking news articles
-		NewsAPI newsNoKey = new NewsAPI();
-		newsNoKey.fetchNews();
-		int j = 0;
-		for (String title : newsNoKey.getNews()) {
-			j++;
-			// System.out.println(j + ". " + title);
-		}
 	}
 }
