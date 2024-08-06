@@ -30,6 +30,7 @@ import javazoom.jl.player.Player;
 
 public class SubwayScreen extends JFrame {
 	// Member Variables
+
 	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
 	private JPanel adPanel;
 	private String[] args;
@@ -311,7 +312,7 @@ public class SubwayScreen extends JFrame {
 	}
 
 	// Play the audio announcement for the given station name
-	private void playStationAnnouncement(String stationName) {
+	public void playStationAnnouncement(String stationName) {
 		// Trim stationName to avoid issues with leading/trailing spaces
 		stationName = stationName.trim();
 		String audioFilePath = "data/stationAudio/" + stationName + ".mp3";
@@ -387,7 +388,7 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
-	private void updateAdPanel(int adCount) {
+	public void updateAdPanel(int adCount) {
 		BufferedImage img = null;
 		int index = adCounter % adPaths.size();
 
@@ -419,7 +420,7 @@ public class SubwayScreen extends JFrame {
 	}
 
 	
-	private void drawTrainPositionsOnMap() {
+	public void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
 		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
 		double scaleX = (double) newWidth / origWidth;

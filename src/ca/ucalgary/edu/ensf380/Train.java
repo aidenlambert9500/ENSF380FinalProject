@@ -50,7 +50,11 @@ public class Train {
 
 
     public String getCurrentStationCode() {
-        String statCode = this.currentStation.getStationCode();
-        return statCode;
+        if (this.currentStation != null) {
+            return this.currentStation.getStationCode();
+        } else {
+            return null;
+        }
     }
+
 }
