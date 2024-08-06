@@ -87,7 +87,7 @@ public class NewsAPI {
 		JsonArray articles = json.getAsJsonArray("articles");
 
 		// For loop that extracts the title from each article
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			JsonObject article = articles.get(i).getAsJsonObject();
 			String title = article.get("title").getAsString();
 			news.add(title); //
