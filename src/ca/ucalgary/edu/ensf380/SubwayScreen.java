@@ -35,7 +35,7 @@ import javazoom.jl.player.Player;
 public class SubwayScreen extends JFrame {
 	// Member Variables
 
-	private JLabel weatherLabel, timeLabel, cityLabel, newsLabel, imageLabel;
+	private JLabel weatherLabel, dateLabel, timeLabel, cityLabel, newsLabel, imageLabel;
 	private JPanel adPanel;
 	private String[] args;
 	private List<Station> stations;
@@ -107,12 +107,15 @@ public class SubwayScreen extends JFrame {
 		weatherLabel = new JLabel("Temperature:");
 		setFixedSize(weatherLabel, 120, 30);
 		weatherLabel.setVerticalAlignment(JLabel.BOTTOM);
+		dateLabel = new JLabel("DATE");
+		setFixedSize(dateLabel, 120, 30);
 		timeLabel = new JLabel("TIME");
 		setFixedSize(timeLabel, 120, 30);
 		cityLabel = new JLabel("CITY");
 		setFixedSize(cityLabel, 120, 30);
 
 		weatherPanel.add(weatherLabel);
+		weatherPanel.add(dateLabel);
 		weatherPanel.add(timeLabel);
 		weatherPanel.add(cityLabel);
 		weatherPanel.setPreferredSize(new Dimension(150, 300));
@@ -198,6 +201,7 @@ public class SubwayScreen extends JFrame {
 		add(trainPanel, trainGBC);
 
 //		// Update the weather information
+		updateWeatherPanel();
 		weatherTimer = new Timer(60000, e -> updateWeatherPanel());
 		weatherTimer.start();
 
@@ -423,9 +427,10 @@ public class SubwayScreen extends JFrame {
 			String city = args[0];
 			WeatherParser weatherReport = new WeatherParser();
 			String weatherInfo = weatherReport.getWeatherInfo(city);
-			String time = weatherReport.getTime(city);
+			String[] info = weatherReport.getDateAndTime(city);
 			weatherLabel.setText(weatherInfo);
-			timeLabel.setText(time);
+			dateLabel.setText("Date: " + info[0]);
+			timeLabel.setText("Time: " + info[1]);
 			cityLabel.setText(city);
 		}
 	}
@@ -510,7 +515,7 @@ public class SubwayScreen extends JFrame {
 	 */
 	public void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
-		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
+		int newWidth = 750, newHeight = 650; // size of map a.k.a Trains.png
 		double scaleX = (double) newWidth / origWidth;
 		double scaleY = (double) newHeight / origHeight;
 

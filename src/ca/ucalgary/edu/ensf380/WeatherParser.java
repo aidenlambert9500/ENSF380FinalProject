@@ -51,7 +51,7 @@ public class WeatherParser {
      * @param city the name of a city to get the time for in string format
      * @return a string of the current time in the given city
      */
-    public String getTime(String city) {
+    public String[] getDateAndTime(String city) {
         String url = "http://worldtimeapi.org/api/timezone/America/" + city;
 
         try {
@@ -63,13 +63,16 @@ public class WeatherParser {
             if (matcher.find()) {
                 String date = matcher.group(1);
                 String time = matcher.group(2);
-                return "Date: " + date + ", Time: " + time;
+                String[] info = new String[2];
+                info[0] = date;
+                info[1] = time;
+                return info;
             } else {
-                return "Time information not found.";
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return "Error fetching time data.";
+            return null;
         }
     }
 
