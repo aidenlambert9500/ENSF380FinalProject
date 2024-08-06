@@ -9,19 +9,19 @@ import java.util.ArrayList;
 
 
 /**
- * A class to connect to a MySQL database to retrieve filepaths to different media types
+ * A class to connect to a MySQL database to retrieve file paths to different media types
  */
 public class Database {
 	private Connection dbConnection;
 	private ResultSet results;
 	private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/ads";
 	private static final String USER = "root";
-	private static final String PASSWORD = "30195900";
+	private static final String PASSWORD = "Jacelynn6.";
 	private ArrayList<String> adPaths = new ArrayList<String>();
 	
 	
 	/**
-	 * A method to connect to the database using a predefined url, password, and username
+	 * A method to connect to the database using a predefined URL, password, and username
 	 */
 	public void connect() {
 		// try to connect to the database, catches any errors
@@ -35,7 +35,7 @@ public class Database {
 	
 	/**
 	 * A method to get the filePaths of all the media present in the database
-	 * @return an ArrayList of strings containing all the filepaths 
+	 * @return an ArrayList of strings containing all the file paths 
 	 */
 	public ArrayList<String> getFilePaths() {
 		String query = "Select * from advertisements";

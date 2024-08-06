@@ -81,7 +81,7 @@ public class WeatherParser {
      * This method uses Jsoup to make a HTTP GET request to the provided URL
      * and parses the response as an HTML document.
      *
-     * @param url the URL to fetch the document from
+     * @param URL the URL to fetch the document from
      * @return the parsed HTML document
      * @throws IOException if an I/O error occurs while connecting to the URL or reading the response
      */
@@ -95,7 +95,7 @@ public class WeatherParser {
      * and parses the response as a JSON document. The content type is ignored
      * to allow Jsoup to process the response as plain text and convert it to a document.
      *
-     * @param url the URL to fetch the JSON document from
+     * @param URL the URL to fetch the JSON document from
      * @return the parsed JSON document
      * @throws IOException if an I/O error occurs while connecting to the URL or reading the response
      */

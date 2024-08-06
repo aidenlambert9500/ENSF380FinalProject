@@ -24,7 +24,6 @@ public class DatabaseTest {
         try {
             ArrayList<String> filePaths = db.getFilePaths();
             
-            // Replace with actual expected file paths from your test database.
             ArrayList<String> expectedFilePaths = new ArrayList<String>();
             expectedFilePaths.add("data/advertisements/LeBron-Tide-Ad.png");
             expectedFilePaths.add("data/advertisements/Barbie-Ad.jpg");
@@ -46,7 +45,6 @@ public class DatabaseTest {
         try {
             ArrayList<Advertisements> ads = db.getAds();
 
-            // Replace with expected ads from your test database.
             ArrayList<Advertisements> expectedAds = new ArrayList<Advertisements>();
             expectedAds.add(new Advertisements("data/advertisements/LeBron-Tide-Ad.png"));
             expectedAds.add(new Advertisements("data/advertisements/Barbie-Ad.jpg"));

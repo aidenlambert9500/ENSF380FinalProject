@@ -5,22 +5,22 @@ package ca.ucalgary.edu.ensf380;
  */
 
 /**
- * A class to store the filepath of each advertisement from the database
+ * A class to store the file path of each advertisement from the database
  */
 public class Advertisements {
     private String filePath;
     
     /**
      * A default constructor
-     * @param filePath a string for each filePath for each specific advertisment
+     * @param filePath a string for each filePath for each specific advertisement
      */
     public Advertisements(String filePath) {
         this.filePath = filePath;   
     }
 
     /**
-     * A method that returns the filepath as a string
-     * @return the filepath in string format
+     * A method that returns the file path as a string
+     * @return the file path in string format
      */
     public String getFilePath() {
     	return this.filePath;
