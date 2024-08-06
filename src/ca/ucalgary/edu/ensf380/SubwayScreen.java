@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
+/**
+ * A class to visually represent all of the data using a GUI
+ */
 public class SubwayScreen extends JFrame {
 	// Member Variables
 
@@ -49,6 +52,10 @@ public class SubwayScreen extends JFrame {
 	private Station currentStation;
 	private boolean showingAd = true;
 
+	/**
+	 * A constructor for the GUI
+	 * @param args the arguments passed from the command line
+	 */
 	public SubwayScreen(String[] args) {
 		// Constructor (launches gui)
 
@@ -132,7 +139,7 @@ public class SubwayScreen extends JFrame {
 			}
 		};
 		trainPanel.add(nextStationLabel, BorderLayout.SOUTH);
-		addTrainInformation(trainPanel); // Add train information to the panel
+		updateTrainPanel(trainPanel); // Add train information to the panel
 		trainPanel.setPreferredSize(new Dimension(700, 60));
 
 		// Set the dimensions of the adPanel and move it to the top left corner
@@ -221,7 +228,64 @@ public class SubwayScreen extends JFrame {
 		// Make the Frame visible
 		setVisible(true);
 	}
+	
+	/**
+	 * Retrieves the JLabel used to display weather information.
+	 * @return the JLabel displaying weather information
+	 */
+	public JLabel getWeatherLabel() {
+	    return this.weatherLabel;
+	}
 
+	/**
+	 * Retrieves the JLabel used to display the current time.
+	 * @return the JLabel displaying the current time
+	 */
+	public JLabel getTimeLabel() {
+	    return this.timeLabel;
+	}
+
+	/**
+	 * Retrieves the JLabel used to display the city name.
+	 * @return the JLabel displaying the city name
+	 */
+	public JLabel getCityLabel() {
+	    return this.cityLabel;
+	}
+
+	/**
+	 * Retrieves the JLabel used to display news headlines.
+	 * @return the JLabel displaying news headlines
+	 */
+	public JLabel getNewsLabel() {
+	    return this.newsLabel;
+	}
+
+	/**
+	 * Retrieves the JPanel that contains advertisement components.
+	 * @return the JPanel used for advertisements
+	 */
+	public JPanel getAdPanel() {
+	    return this.adPanel;
+	}
+
+	/**
+	 * Retrieves the list of file paths for advertisement images.
+	 * @return an ArrayList containing file paths to advertisement images
+	 */
+	public ArrayList<String> getAdPaths() {
+	    return this.adPaths;
+	}
+
+	/**
+	 * Retrieves the JLabel used to display images (e.g., advertisements).
+	 * @return the JLabel used for displaying images
+	 */
+	public JLabel getImageLabel() {
+	    return this.imageLabel;
+	}
+
+	
 	
 	/**
 	 * This function is used to switch the timer delays for the ads and the map. It calls updateAdPanel when the map is displayed 
@@ -241,12 +305,11 @@ public class SubwayScreen extends JFrame {
 		showingAd = !showingAd;
 	}
 	
-	
-	private void addTrainInformation(JPanel trainPanel) {
-		updateTrainPanel(trainPanel);
-	}
 
-	// Method to update current train station and next stations represented
+	/**
+	 * A method to update current train station and next stations represented
+	 * @param trainPanel the panel which displays the train line map
+	 */
 	private void updateTrainPanel(JPanel trainPanel) {
 		// Check if train list is empty and fetch the current station of the first train
 		if (currentTrain != null) {
@@ -311,7 +374,10 @@ public class SubwayScreen extends JFrame {
 		trainPanel.repaint();
 	}
 
-	// Play the audio announcement for the given station name
+	/**
+	 * A method to play the audio for the given station name when a train is arriving there
+	 * @param stationName
+	 */
 	public void playStationAnnouncement(String stationName) {
 		// Trim stationName to avoid issues with leading/trailing spaces
 		stationName = stationName.trim();
@@ -337,7 +403,9 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
-	// Method to fetch Weather and Time from API's
+	/**
+	 * A method to update the weather panel with information from weatherParser
+	 */
 	private void updateWeatherPanel() {
 		if (args == null || args.length == 0) {
 			weatherLabel.setText("Please provide a city as a command line argument.");
@@ -351,8 +419,10 @@ public class SubwayScreen extends JFrame {
 			cityLabel.setText(city);
 		}
 	}
-
-	// Method to fetch news head titles based on keyword or world news from News API
+	
+	/**
+	 * A method to fetch news head titles based on keyword or world news from News API
+	 */
 	private void updateNewsPanel() {
 		NewsAPI newsAPI = new NewsAPI();
 		// Only fetches using the API if the news list is null (empty). Ensures we
@@ -388,6 +458,10 @@ public class SubwayScreen extends JFrame {
 		}
 	}
 
+	/**
+	 * A method to update the adPanel with the next advertisement in the database
+	 * @param adCount the index of the list of adPaths which we want to access
+	 */
 	public void updateAdPanel(int adCount) {
 		BufferedImage img = null;
 		int index = adCounter % adPaths.size();
@@ -420,6 +494,9 @@ public class SubwayScreen extends JFrame {
 	}
 
 	
+	/**
+	 * A method to display the map and the trains current positions on each line 
+	 */
 	public void drawTrainPositionsOnMap() {
 		final int origWidth = 1750, origHeight = 1750; // size used for cords of train stations
 		int newWidth = 472, newHeight = 264; // size of map a.k.a Trains.png
@@ -476,6 +553,12 @@ public class SubwayScreen extends JFrame {
 	}
 
 	// Method to fix the size of JLabels
+	/**
+	 * A method to set the size of the JLabels
+	 * @param label the label whose size is being changed
+	 * @param width the width of the desired size of the panel in integer format
+	 * @param height the height of the desired size of the panel in integer format
+	 */
 	private void setFixedSize(JLabel label, int width, int height) {
 		Dimension size = new Dimension(width, height);
 		label.setPreferredSize(size);
@@ -508,18 +591,6 @@ public class SubwayScreen extends JFrame {
 			}
 		}));
 
-		// Prints simulator in the console.
-		// Just for test. Its while loop friezes the application.
-//        InputStream inputStream = process.getInputStream();
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        String line;
-//        try {
-//            while ((line = reader.readLine()) != null) {
-//                System.out.println(line);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 	}
 	
 }

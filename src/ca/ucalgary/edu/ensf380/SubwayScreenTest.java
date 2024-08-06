@@ -24,44 +24,44 @@ public class SubwayScreenTest {
 
     @Test
     public void testWeatherLabel() {
-        assertNotNull("Weather label should not be null", screen.weatherLabel);
+        assertNotNull("Weather label should not be null", screen.getWeatherLabel());
     }
 
     @Test
     public void testTimeLabel() {
-        assertNotNull("Time label should not be null", screen.timeLabel);
+        assertNotNull("Time label should not be null", screen.getTimeLabel());
     }
 
     @Test
     public void testCityLabel() {
-        assertNotNull("City label should not be null", screen.cityLabel);
+        assertNotNull("City label should not be null", screen.getCityLabel());
     }
 
     @Test
     public void testNewsLabel() {
-        assertNotNull("News label should not be null", screen.newsLabel);
+        assertNotNull("News label should not be null", screen.getNewsLabel());
     }
 
     @Test
     public void testAdPanel() {
-        assertNotNull("Ad panel should not be null", screen.adPanel);
+        assertNotNull("Ad panel should not be null", screen.getAdPanel());
     }
 
     @Test
     public void testAdPaths() {
-        assertNotNull("Ad paths list should not be null", screen.adPaths);
+        assertNotNull("Ad paths list should not be null", screen.getAdPaths());
     }
 
     @Test
     public void testUpdateAdPanel() {
         screen.updateAdPanel(0);
-        assertNotNull("Image label should not be null after updating ad panel", screen.imageLabel);
+        assertNotNull("Image label should not be null after updating ad panel", screen.getImageLabel());
     }
 
     @Test
     public void testDrawTrainPositionsOnMap() {
         screen.drawTrainPositionsOnMap();
-        assertNotNull("Image label should not be null after drawing train positions", screen.imageLabel);
+        assertNotNull("Image label should not be null after drawing train positions", screen.getImageLabel());
     }
 
     @Test
