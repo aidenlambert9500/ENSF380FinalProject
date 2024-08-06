@@ -34,7 +34,7 @@ public class SubwayScreen extends JFrame {
 	private String[] args;
 	private List<Station> stations;
 	private int currentStationIndex = 1; // Starting from "Lakeview Heights Station"
-	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, mapTimer;
+	private Timer trainTimer, newsTimer, adTimer, weatherTimer, stationChangeTimer, mapTimer, scrollTimer;
 	private int newsIndex = 0;
 	private ArrayList<String> newsList;
 	private Database db = new Database();
@@ -115,17 +115,17 @@ public class SubwayScreen extends JFrame {
 
 		// Create a section for the news
 		JPanel newsPanel = new JPanel();
-		newsPanel.setBackground(Color.cyan);
-		newsPanel.add(new JLabel("News") {
-			{
-				setFont(new Font("Serif", Font.BOLD, 20));
-			}
-		});
-		newsPanel.setPreferredSize(new Dimension(700, 60));
+        newsPanel.setLayout(new BorderLayout());
+        newsPanel.setBackground(Color.PINK);
+        newsPanel.setPreferredSize(new Dimension(700, 60));
+        
 		newsLabel = new JLabel();
-		newsLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Set font size and type for news
-		setFixedSize(newsLabel, 120, 30);
-		newsPanel.add(newsLabel);
+        newsLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Larger font size for scrolling text
+        JScrollPane scrollPane = new JScrollPane(newsLabel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(700, 60));
+        newsPanel.add(scrollPane, BorderLayout.CENTER);
+        startScrollingNews();
 
 		// Create a section for the trains
 		JPanel trainPanel = new JPanel();
@@ -211,9 +211,9 @@ public class SubwayScreen extends JFrame {
 		});
 		stationChangeTimer.start();
 
-//		// Timer to update news every 100 milliseconds
-		newsTimer = new Timer(500, e -> updateNewsPanel());
-//		newsTimer.start();
+//		// Timer to update news every 3 seconds
+		newsTimer = new Timer(3000, e -> updateNewsPanel());
+		newsTimer.start();
 
 		// Timer to update the ads every 10 seconds
 		// TODO make the adPanel show the big map every other refresh
@@ -222,7 +222,7 @@ public class SubwayScreen extends JFrame {
 		adTimer.start();
 
 		mapTimer = new Timer(5000, e -> switchContent(adCounter));
-
+		
 		// Make the Frame visible
 		setVisible(true);
 	}
@@ -328,13 +328,17 @@ public class SubwayScreen extends JFrame {
 		JPanel mapPanel = new JPanel();
 		mapPanel.setLayout(new GridLayout(1, 6));
 
-		int start = currentStationIndex - 1;
-		int end = currentStationIndex + 5;
-		if (start < 0) {
-			start = 0;
-		}
-		if (end > stations.size()) {
-			end = stations.size();
+		int start, end;
+		boolean isBackwards = "backward".equalsIgnoreCase(currentTrain.getDirection());
+
+		if (isBackwards) {
+			// For backwards direction, show stations before the current station
+			start = Math.max(0, currentStationIndex - 5);
+			end = currentStationIndex + 1;
+		} else {
+			// For forwards direction, show stations after the current station
+			start = currentStationIndex - 1;
+			end = Math.min(stations.size(), currentStationIndex + 6);
 		}
 
 		// Create larger fonts for the circles and station names
@@ -440,7 +444,7 @@ public class SubwayScreen extends JFrame {
 		// aren't fetching every .5 seconds
 		if (newsList == null) {
 			// fetches news on second string in arg otherwise it fetches general news
-			if (args.length != 2 || args[1] == null) {
+			if (args.length != 3 || args[2] == null) {
 				try {
 					newsAPI.fetchNews(); // Fetch top headlines
 					newsList = newsAPI.getNews();
@@ -453,7 +457,7 @@ public class SubwayScreen extends JFrame {
 				}
 			} else {
 				try {
-					newsAPI.fetchNewsByKeyword(args[1]);
+					newsAPI.fetchNewsByKeyword(args[2]);
 					if (newsList != null) {
 						newsIndex = (newsIndex + 1) % newsList.size();
 						newsLabel.setText(newsList.get(newsIndex));
@@ -467,6 +471,25 @@ public class SubwayScreen extends JFrame {
 			newsIndex = (newsIndex + 1) % newsList.size();
 			newsLabel.setText(newsList.get(newsIndex));
 		}
+	}
+	
+	// Method to start scrolling news
+	private void startScrollingNews() {
+	    Timer scrollTimer = new Timer(30, e -> {
+	        // Scroll the text horizontally
+	        int x = newsLabel.getX();
+	        int width = newsLabel.getPreferredSize().width;
+	        int panelWidth = newsLabel.getParent().getWidth();
+	        
+	        // Move the text
+	        newsLabel.setLocation(x - 1, newsLabel.getY());
+	        
+	        // Reset the position if text has scrolled off
+	        if (x + width < 0) {
+	            newsLabel.setLocation(panelWidth, newsLabel.getY());
+	        }
+	    });
+	    scrollTimer.start();
 	}
 
 	/**
