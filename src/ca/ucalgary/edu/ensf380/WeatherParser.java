@@ -47,9 +47,9 @@ public class WeatherParser {
     }
 
     /**
-     * A method to retrieve the time at a current city
+     * A method to retrieve the date and time at a current city
      * @param city the name of a city to get the time for in string format
-     * @return a string of the current time in the given city
+     * @return a string array of the current date and time in the given city
      */
     public String[] getDateAndTime(String city) {
         String url = "http://worldtimeapi.org/api/timezone/America/" + city;

@@ -9,100 +9,98 @@ import java.io.IOException;
 
 public class WeatherParserTest {
 
-    private class TestableWeatherParser extends WeatherParser {
-        private String htmlContent;
-        private String jsonContent;
+	private class TestableWeatherParser extends WeatherParser {
+		private String htmlContent;
+		private String jsonContent;
 
-        public void setHtmlContent(String htmlContent) {
-            this.htmlContent = htmlContent;
-        }
+		public void setHtmlContent(String htmlContent) {
+			this.htmlContent = htmlContent;
+		}
 
-        public void setJsonContent(String jsonContent) {
-            this.jsonContent = jsonContent;
-        }
+		public void setJsonContent(String jsonContent) {
+			this.jsonContent = jsonContent;
+		}
 
-        @Override
-        protected Document fetchDocumentFromUrl(String url) throws IOException {
-            return Jsoup.parse(htmlContent);
-        }
+		@Override
+		protected Document fetchDocumentFromUrl(String url) throws IOException {
+			return Jsoup.parse(htmlContent);
+		}
 
-        @Override
-        protected Document fetchJsonFromUrl(String url) throws IOException {
-            return Jsoup.parse(jsonContent);
-        }
-    }
+		@Override
+		protected Document fetchJsonFromUrl(String url) throws IOException {
+			return Jsoup.parse(jsonContent);
+		}
+	}
 
-    @Test
-    public void testGetWeatherInfo() {
-        TestableWeatherParser parser = new TestableWeatherParser();
-        parser.setHtmlContent("Calgary: ☀ 25°C");
+	@Test
+	public void testGetWeatherInfo() {
+		TestableWeatherParser parser = new TestableWeatherParser();
+		parser.setHtmlContent("Calgary: ☀ 25°C");
 
-        String expected = "Temperature: 25 °C";
-        String actual = parser.getWeatherInfo("Calgary");
+		String expected = "Temperature: 25 °C";
+		String actual = parser.getWeatherInfo("Calgary");
 
-        assertEquals(expected, actual);
-    }
+		assertEquals(expected, actual);
+	}
 
-    @Test
-    public void testGetWeatherInfoNoMatch() {
-        TestableWeatherParser parser = new TestableWeatherParser();
-        parser.setHtmlContent("No weather information");
+	@Test
+	public void testGetWeatherInfoNoMatch() {
+		TestableWeatherParser parser = new TestableWeatherParser();
+		parser.setHtmlContent("No weather information");
 
-        String expected = "Weather information not found.";
-        String actual = parser.getWeatherInfo("Nowhere");
+		String expected = "Weather information not found.";
+		String actual = parser.getWeatherInfo("Nowhere");
 
-        assertEquals(expected, actual);
-    }
+		assertEquals(expected, actual);
+	}
 
-    @Test
-    public void testGetWeatherInfoError() {
-        TestableWeatherParser parser = new TestableWeatherParser() {
-            @Override
-            protected Document fetchDocumentFromUrl(String url) throws IOException {
-                throw new IOException();
-            }
-        };
+	@Test
+	public void testGetWeatherInfoError() {
+		TestableWeatherParser parser = new TestableWeatherParser() {
+			@Override
+			protected Document fetchDocumentFromUrl(String url) throws IOException {
+				throw new IOException();
+			}
+		};
 
-        String expected = "Error fetching weather data.";
-        String actual = parser.getWeatherInfo("ErrorCity");
+		String expected = "Error fetching weather data.";
+		String actual = parser.getWeatherInfo("ErrorCity");
 
-        assertEquals(expected, actual);
-    }
+		assertEquals(expected, actual);
+	}
 
-    @Test
-    public void testGetTime() {
-        TestableWeatherParser parser = new TestableWeatherParser();
-        parser.setJsonContent("{\"datetime\":\"2024-08-05T12:34:00.000Z\"}");
+	@Test
+	public void testGetDateAndTime() {
+		TestableWeatherParser parser = new TestableWeatherParser();
+		parser.setJsonContent("{\"datetime\":\"2024-08-05T12:34:00.000Z\"}");
 
-        String expected = "Date: 2024-08-05, Time: 12:34";
-        String actual = parser.getTime("Calgary");
+		String[] expected = { "2024-08-05", "12:34" };
+		String[] actual = parser.getDateAndTime("Calgary");
 
-        assertEquals(expected, actual);
-    }
+		assertArrayEquals(expected, actual);
+	}
 
-    @Test
-    public void testGetTimeNoMatch() {
-        TestableWeatherParser parser = new TestableWeatherParser();
-        parser.setJsonContent("{}");
+	@Test
+	public void testGetDateAndTimeNoMatch() {
+		TestableWeatherParser parser = new TestableWeatherParser();
+		parser.setJsonContent("{}");
 
-        String expected = "Time information not found.";
-        String actual = parser.getTime("Nowhere");
+		String[] actual = parser.getDateAndTime("Nowhere");
 
-        assertEquals(expected, actual);
-    }
+		assertNull(actual);
+	}
 
-    @Test
-    public void testGetTimeError() {
-        TestableWeatherParser parser = new TestableWeatherParser() {
-            @Override
-            protected Document fetchJsonFromUrl(String url) throws IOException {
-                throw new IOException();
-            }
-        };
+	@Test
+	public void testGetDateAndTimeError() {
+		TestableWeatherParser parser = new TestableWeatherParser() {
+			@Override
+			protected Document fetchJsonFromUrl(String url) throws IOException {
+				throw new IOException();
+			}
+		};
 
-        String expected = "Error fetching time data.";
-        String actual = parser.getTime("ErrorCity");
+		String[] actual = parser.getDateAndTime("ErrorCity");
 
-        assertEquals(expected, actual);
-    }
+		assertNull(actual);
+	}
 }

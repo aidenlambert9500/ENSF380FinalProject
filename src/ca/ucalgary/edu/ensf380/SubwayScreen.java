@@ -46,11 +46,10 @@ public class SubwayScreen extends JFrame {
 	private Database db = new Database();
 	private ArrayList<Advertisements> ads;
 	private ArrayList<String> adPaths = new ArrayList<String>();
-	private int adCounter = 0, mapCounter = 0;
+	private int adCounter = 0;
 	private final String MAP_PATH = "data/Trains.png";
 	private List<Train> trains;
 	private Train currentTrain;
-	private Station currentStation;
 	private boolean showingAd = true;
 
 	/**
@@ -206,10 +205,10 @@ public class SubwayScreen extends JFrame {
 		weatherTimer.start();
 
 		// Set up the timer to update the station every 20 seconds
-		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
-		trainTimer.start();
+//		trainTimer = new Timer(20000, e -> updateTrainPanel(trainPanel));
+//		trainTimer.start();
 
-		stationChangeTimer = new Timer(5000, e -> {
+		stationChangeTimer = new Timer(15000, e -> {
 			currentStationIndex = (currentStationIndex + 1) % stations.size();
 			SubwaySetup.initializeSubwaySystem(); // Run simulator and populate all lines and trains
 			trains = SubwaySetup.getTrains();
@@ -375,7 +374,9 @@ public class SubwayScreen extends JFrame {
 		String nextStationName = currentStationIndex < stations.size() - 1
 				? stations.get(currentStationIndex + 1).getStationName()
 				: "End of Line";
-		JLabel nextLabel = new JLabel("Next Stop: " + nextStationName, JLabel.CENTER);
+		JLabel nextLabel = new JLabel(
+				"Next Stop: " + nextStationName + " \t\t\t\t\tDirection: " + currentTrain.getDirection(),
+				JLabel.CENTER);
 		nextLabel.setFont(nextStopFont);
 		trainPanel.add(mapPanel, BorderLayout.CENTER);
 		trainPanel.add(nextLabel, BorderLayout.SOUTH);
@@ -528,7 +529,7 @@ public class SubwayScreen extends JFrame {
 
 		if (img != null) {
 			Graphics2D g2d = img.createGraphics(); // Create Graphics2D obj from buffered img
-			g2d.setColor(Color.RED);
+			g2d.setColor(Color.BLACK);
 			int dotSize = 5; // Adjust this value to change the size of the dots
 			for (Train train : trains) {
 				if (train.getCurrentStation() != null) {
@@ -542,7 +543,7 @@ public class SubwayScreen extends JFrame {
 					if (station.equals(currentTrain.getCurrentStation())) {
 						g2d.setColor(Color.GREEN); // Current station color
 					} else {
-						g2d.setColor(Color.RED); // Other stations color
+						g2d.setColor(Color.BLACK); // Other stations color
 					}
 
 					// Draw the dot on the map
